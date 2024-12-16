@@ -1,5 +1,5 @@
 import React from 'react';
-import therapistImage from '/src/assets/images/therapist.jpg';
+import therapistImage from '../assets/images/therapist.jpg';
 
 export function About() {
   return (
