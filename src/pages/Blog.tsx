@@ -6,7 +6,7 @@ const articles = [
     title: 'Что такое телесная терапия и как она работает',
     excerpt: 'Узнайте о принципах телесной терапии и её влиянии на физическое и эмоциональное здоровье...',
     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    author: 'Валентина Петрова',
+    author: 'Валентина Баранова',
     date: '15 марта 2024',
     readTime: '5 мин'
   },
@@ -14,7 +14,7 @@ const articles = [
     title: 'Как справиться со стрессом через работу с телом',
     excerpt: 'Практические советы по снятию стресса и напряжения с помощью телесных практик...',
     image: 'https://images.unsplash.com/photo-1591343395082-e120087004b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    author: 'Валентина Петрова',
+    author: 'Валентина Баранова',
     date: '10 марта 2024',
     readTime: '7 мин'
   },
@@ -22,7 +22,7 @@ const articles = [
     title: 'Холистический подход к здоровью',
     excerpt: 'Почему важно рассматривать здоровье как единую систему и как этого достичь...',
     image: 'https://images.unsplash.com/photo-1519415387722-a1c3bbef716c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    author: 'Валентина Петрова',
+    author: 'Валентина Баранова',
     date: '5 марта 2024',
     readTime: '6 мин'
   }

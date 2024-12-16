@@ -1,4 +1,5 @@
 import React from 'react';
+import therapistImage from '/src/assets/images/therapist.jpg';
 
 export function About() {
   return (
@@ -12,13 +13,13 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
           <div>
             <img
-              src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-              alt="Терапевт"
+              src={therapistImage} 
+              alt="Терапевт" 
               className="rounded-lg shadow-lg"
             />
           </div>
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Валентина Петрова</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Валентина Баранова</h2>
             <p className="text-gray-600 mb-6">
               Профессиональный телесный терапевт с более чем 10-летним опытом работы. 
               Специализируюсь на холистическом подходе к здоровью, сочетая различные 
