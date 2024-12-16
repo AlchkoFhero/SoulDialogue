@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -10,25 +10,9 @@ import { Gallery } from './pages/Gallery';
 import { Blog } from './pages/Blog';
 import { Contact } from './pages/Contact';
 import { FAQ } from './pages/FAQ';
-import 'aos/dist/aos.css'; // Подключаем стили AOS
-import AOS from 'aos'; // Импортируем библиотеку AOS
+import 'aos/dist/aos.css'; // Стили библиотеки AOS
 
 function App() {
-  // Инициализация AOS и добавление анимаций ко всем элементам
-  useEffect(() => {
-    AOS.init({
-      duration: 1000, // Длительность анимации
-      easing: 'ease-out', // Плавность анимации
-      once: true, // Анимация запускается только один раз
-    });
-
-    // Автоматическое добавление анимации ко всем элементам
-    document.querySelectorAll('*').forEach((el, index) => {
-      el.setAttribute('data-aos', 'fade-up'); // Анимация всплытия
-      el.setAttribute('data-aos-delay', `${index * 50}`); // Задержка для последовательного появления
-    });
-  }, []);
-
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
