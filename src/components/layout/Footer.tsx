@@ -16,8 +16,22 @@ export function Footer() {
         <div>
           <h3 className="text-lg font-semibold mb-4">Следите за нами</h3>
           <div className="flex space-x-4">
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">Instagram</a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">Facebook</a>
+            <a
+              href="https://instagram.com"
+              className="hover:text-purple-400 transition-colors duration-200"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://facebook.com"
+              className="hover:text-purple-400 transition-colors duration-200"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Facebook
+            </a>
           </div>
         </div>
 
