@@ -1,18 +1,12 @@
 {
-  "name": "vite-react-typescript-starter",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "project",
+  "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "dependencies": {
-    "aos": "^2.3.4",
-    "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -43,10 +37,6 @@
     "update-notifier": "^7.3.1",
     "vite": "^5.4.2",
     "vite-plugin-static-copy": "^2.2.0"
-  },
-  "description": "[Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/AlchkoFhero/SoulDialogue)",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  }
 }
+
