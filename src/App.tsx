@@ -29,6 +29,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop /> {/* Сброс прокрутки при каждом переходе */}
+      <ScrollToTopOnReload /> {/* Сброс при перезагрузке */}
       <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
         <Header />
         <Routes>
@@ -47,5 +48,13 @@ function App() {
     </Router>
   );
 }
+
+export const ScrollToTopOnReload = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  return null;
+};
+
 
 export default App;
