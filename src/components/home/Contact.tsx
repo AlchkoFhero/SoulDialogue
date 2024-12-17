@@ -54,7 +54,7 @@ export function Contact() {
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <span className="ml-4 text-gray-600">
-                  г. Казань, ул. Пушкина, д. 52
+                  г. Альметьевск, ул. Ленина, д. 52
                 </span>
               </div>
             </div>

@@ -77,7 +77,7 @@ export function Contact() {
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
                   <span className="text-gray-600 block">
-                    г. Казань, ул. Пушкина, д. 52
+                    г. Альметьевск, ул. Ленина, д. 52
                   </span>
                   <span className="text-gray-500 text-sm block mt-1">
                     Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00

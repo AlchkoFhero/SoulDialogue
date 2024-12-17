@@ -14,7 +14,7 @@ export function Footer() {
           <h3 className="text-lg font-semibold mb-4">Контакты</h3>
           <p>+7 (917) 935-18-51</p>
           <p>contact@dialog-dushi.ru</p>
-          <p>г. Казань, ул. Пушкина, д. 52</p>
+          <p>г. Альметьевск, ул. Ленина, д. 52</p>
         </div>
 
         {/* Социальные сети */}
