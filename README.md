@@ -39,3 +39,7 @@ index.html (основная страница сайта)
 SITE: souldialogue.top
 
 https://souldialogue.netlify.app/
+
+
+Run site locally:
+npx vite preview --port 3000

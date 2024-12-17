@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-export function ScrollToTop() {
+export const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Прокрутка страницы к началу
+    console.log('Смена маршрута на:', pathname);
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;
-}
+};
