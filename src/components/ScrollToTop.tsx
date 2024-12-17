@@ -5,8 +5,10 @@ export const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    console.log('Смена маршрута на:', pathname);
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant',
+    });
   }, [pathname]);
 
   return null;

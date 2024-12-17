@@ -43,3 +43,48 @@ https://souldialogue.netlify.app/
 
 Run site locally:
 npx vite preview --port 3000
+
+
+
+Запуск проекта В StackBlitz терминале выполни команду:
+
+bash
+Copy code
+npm run dev
+Эта команда запустит Vite локально на порту 3000.
+StackBlitz автоматически создаст Preview ссылку (справа или в нижнем углу).
+Открой ссылку для просмотра сайта.
+Если порт занят Если порт 3000 занят или сайт не запускается, используй другой порт:
+
+bash
+Copy code
+npm run dev -- --port 3001
+Сборка для продакшена Чтобы собрать проект, выполни:
+
+bash
+Copy code
+npm run build
+Проект соберётся в папку dist/.
+Размещение на Hostinger (Кратко):
+Собери проект:
+
+bash
+Copy code
+npm run build
+Подготовь файлы:
+
+Найди папку dist.
+Архивируй её в ZIP.
+Загрузи на Hostinger:
+
+Используй File Manager или FTP.
+Загрузи содержимое dist в папку public_html.
+Проверка:
+
+Открой свой сайт по домену: yourdomain.com.
+Обратите внимание
+Убедись, что файлы vite.config.ts и package.json верно настроены.
+Если проблема остаётся, проверь:
+Путь к index.html.
+Правильность импорта файлов в main.tsx.
+Теперь всё должно работать!
