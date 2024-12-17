@@ -3,12 +3,10 @@
 @tailwind utilities;
 
 html {
-    scroll-behavior: auto; /* Установи на auto, чтобы убрать плавный скролл */
-  }
-  
-html,
+  scroll-behavior: auto;
+}
+
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Отключаем горизонтальный скролл */
 }
