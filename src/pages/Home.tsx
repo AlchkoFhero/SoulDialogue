@@ -9,12 +9,35 @@ import { Contact } from '../components/home/Contact';
 export function Home() {
   return (
     <div>
-      <Hero />
-      <Services />
-      <Promotions />
-      <Features />
-      <Reviews />
-      <Contact />
+      {/* Hero Секция */}
+      <section data-aos="fade-up">
+        <Hero />
+      </section>
+
+      {/* Наши услуги */}
+      <section id="services" data-aos="fade-up" data-aos-delay="100">
+        <Services />
+      </section>
+
+      {/* Акции и специальные предложения */}
+      <section data-aos="fade-up" data-aos-delay="200">
+        <Promotions />
+      </section>
+
+      {/* Почему выбирают нас */}
+      <section data-aos="fade-up" data-aos-delay="300">
+        <Features />
+      </section>
+
+      {/* Отзывы наших клиентов */}
+      <section data-aos="fade-up" data-aos-delay="400">
+        <Reviews />
+      </section>
+
+      {/* Свяжитесь с нами */}
+      <section data-aos="fade-up" data-aos-delay="500">
+        <Contact />
+      </section>
     </div>
   );
 }

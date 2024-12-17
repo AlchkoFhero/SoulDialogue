@@ -1,22 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 export function Contact() {
+  useEffect(() => {
+    AOS.init({
+      duration: 800, // Длительность анимации
+      easing: 'ease-in-out', // Плавность анимации
+      once: false, // Анимация запускается каждый раз
+      mirror: true, // Анимация срабатывает при прокрутке вверх
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-purple-50 pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        {/* Заголовок */}
+        <div className="text-center mb-12" data-aos="fade-up">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакты</h1>
-          <p className="text-xl text-gray-600">Свяжитесь с нами удобным для вас способом</p>
+          <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+            Свяжитесь с нами удобным для вас способом
+          </p>
         </div>
 
+        {/* Контактные данные и форма */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          {/* Контакты */}
+          <div
+            className="bg-white rounded-lg shadow-lg p-8"
+            data-aos="fade-right"
+            data-aos-delay="200"
+          >
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
             <div className="space-y-6">
               <div className="flex items-center">
                 <Phone className="w-6 h-6 text-purple-600" />
-                <a href="tel:+79179351851" className="ml-4 text-gray-600 hover:text-purple-600">
+                <a
+                  href="tel:+79179351851"
+                  className="ml-4 text-gray-600 hover:text-purple-600"
+                >
                   +7 (917) 935-18-51
                 </a>
               </div>
@@ -43,14 +66,19 @@ export function Contact() {
               </div>
               <div className="flex items-center">
                 <Mail className="w-6 h-6 text-purple-600" />
-                <a href="mailto:contact@dialog-dushi.ru" className="ml-4 text-gray-600 hover:text-purple-600">
+                <a
+                  href="mailto:contact@dialog-dushi.ru"
+                  className="ml-4 text-gray-600 hover:text-purple-600"
+                >
                   contact@dialog-dushi.ru
                 </a>
               </div>
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
-                  <span className="text-gray-600 block">г. Казань, ул. Пушкина, д. 52</span>
+                  <span className="text-gray-600 block">
+                    г. Казань, ул. Пушкина, д. 52
+                  </span>
                   <span className="text-gray-500 text-sm block mt-1">
                     Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00
                   </span>
@@ -59,7 +87,12 @@ export function Contact() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          {/* Форма */}
+          <div
+            className="bg-white rounded-lg shadow-lg p-8"
+            data-aos="fade-left"
+            data-aos-delay="200"
+          >
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
             <form className="space-y-6">
               <div>
@@ -83,7 +116,10 @@ export function Contact() {
                 />
               </div>
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Сообщение
                 </label>
                 <textarea
@@ -102,7 +138,12 @@ export function Contact() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
+        {/* Карта */}
+        <div
+          className="bg-white rounded-lg shadow-lg p-8 mb-16"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Как нас найти</h2>
           <div className="aspect-w-16 aspect-h-9">
             <iframe

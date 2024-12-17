@@ -1,5 +1,7 @@
 import React from 'react';
 import { Clock, CheckCircle } from 'lucide-react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const services = [
   {
@@ -18,7 +20,7 @@ const services = [
     title: 'Холистический массаж',
     description: 'Целостный подход к работе с телом и энергетическими потоками',
     duration: '90 минут',
-    price: '5000 ₽',
+    price: '5500 ₽',
     benefits: [
       'Гармонизация энергетических потоков',
       'Глубокое расслабление',
@@ -30,7 +32,7 @@ const services = [
     title: 'Телесная терапия',
     description: 'Работа с телесными зажимами и эмоциональными блоками',
     duration: '90 минут',
-    price: '5000 ₽',
+    price: '5500 ₽',
     benefits: [
       'Освобождение от блоков',
       'Работа с эмоциями',
@@ -42,18 +44,38 @@ const services = [
 
 export function Services() {
   return (
-    <div className="min-h-screen bg-purple-50 pt-24">
+    <div className="min-h-screen bg-purple-50 pt-24" data-aos="fade-up">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Заголовок секции */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Услуги и цены</h1>
-          <p className="text-xl text-gray-600">Профессиональный подход к вашему здоровью</p>
+          <h1
+            className="text-4xl font-bold text-gray-900 mb-4"
+            data-aos="fade-up"
+          >
+            Услуги и цены
+          </h1>
+          <p
+            className="text-xl text-gray-600"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            Профессиональный подход к вашему здоровью
+          </p>
         </div>
 
+        {/* Карточки услуг */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {services.map((service) => (
-            <div key={service.title} className="bg-white rounded-lg shadow-lg overflow-hidden">
+          {services.map((service, index) => (
+            <div
+              key={service.title}
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
+              data-aos="zoom-in"
+              data-aos-delay={index * 100}
+            >
               <div className="p-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">{service.title}</h2>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  {service.title}
+                </h2>
                 <p className="text-gray-600 mb-6">{service.description}</p>
                 
                 <div className="flex items-center mb-6">
@@ -62,8 +84,13 @@ export function Services() {
                 </div>
 
                 <div className="space-y-3 mb-8">
-                  {service.benefits.map((benefit) => (
-                    <div key={benefit} className="flex items-start">
+                  {service.benefits.map((benefit, benefitIndex) => (
+                    <div
+                      key={benefit}
+                      className="flex items-start"
+                      data-aos="fade"
+                      data-aos-delay={index * 100 + benefitIndex * 50}
+                    >
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" />
                       <span className="text-gray-600">{benefit}</span>
                     </div>
@@ -71,8 +98,14 @@ export function Services() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-purple-600">{service.price}</span>
-                  <button className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-colors">
+                  <span className="text-2xl font-bold text-purple-600">
+                    {service.price}
+                  </span>
+                  <button
+                    className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-colors"
+                    data-aos="fade"
+                    data-aos-delay={index * 100 + 50}
+                  >
                     Записаться
                   </button>
                 </div>
@@ -81,11 +114,20 @@ export function Services() {
           ))}
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Специальные предложения</h2>
+        {/* Специальные предложения */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-16" data-aos="fade-up">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            Специальные предложения
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border border-purple-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Абонемент на 10 сеансов</h3>
+            <div
+              className="border border-purple-200 rounded-lg p-6"
+              data-aos="zoom-in"
+              data-aos-delay="100"
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Абонемент на 10 сеансов
+              </h3>
               <p className="text-gray-600 mb-4">
                 Приобретите абонемент на 10 сеансов и получите скидку 20%
               </p>
@@ -94,8 +136,14 @@ export function Services() {
                 <span className="text-gray-500 line-through">40000 ₽</span>
               </div>
             </div>
-            <div className="border border-purple-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Первое посещение</h3>
+            <div
+              className="border border-purple-200 rounded-lg p-6"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Первое посещение
+              </h3>
               <p className="text-gray-600 mb-4">
                 Скидка 15% на первый сеанс для новых клиентов
               </p>
