@@ -14,6 +14,7 @@ import { Blog } from './pages/Blog';
 import { Article } from './pages/Article'; // Новый компонент для детальной статьи
 import { Contact } from './pages/Contact';
 import { FAQ } from './pages/FAQ';
+import { ScrollToTop } from './components/ScrollToTop'; // Импортируем новый компонент ScrollToTop
 
 function App() {
   useEffect(() => {
@@ -27,17 +28,17 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop /> {/* Сброс прокрутки при каждом переходе */}
       <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<Article />} /> {/* Новый маршрут */}
+          <Route path="/blog/:id" element={<Article />} /> {/* Детальная статья */}
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
         </Routes>
