@@ -1,0 +1,6 @@
+[dev]
+  framework = "vite"
+  command = "vite"
+  targetPort = 3000
+  port = 8888
+  publish = "dist" # Укажем папку dist как основную для публикации
