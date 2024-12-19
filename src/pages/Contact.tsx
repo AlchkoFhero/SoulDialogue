@@ -54,7 +54,7 @@ export function Contact() {
         }, 
         withCredentials: true,
       });
-      
+          
       if (response.data && response.data.success) {
         setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
         setFormData({ name: '', phone: '', message: '' });
