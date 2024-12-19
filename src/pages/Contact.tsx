@@ -47,21 +47,16 @@ export function Contact() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://46.202.156.157:3001/send-to-telegram', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-           'x-api-key': process.env.API_KEY,
-        },
-        withCredentials: true
-      });
+      const response = await axios.post('https://souldialogue.top:3001/send-to-telegram', formData,
+        { headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.API_KEY, }, withCredentials: true, });
 
       if (response.data && response.data.success) {
         setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
         setFormData({ name: '', phone: '', message: '' });
-        } else {
-         console.error('Ошибка сервера:', response.data.message);
-         setResponseMessage(response.data.message || 'Ошибка сервера. Попробуйте ещё раз.');
-        }
+      } else {
+        console.error('Ошибка сервера:', response.data.message);
+        setResponseMessage(response.data.message || 'Ошибка сервера. Попробуйте ещё раз.');
+      }
     } catch (error) {
       if (error.response) {
         console.error('Ошибка ответа от сервера:', error.response.data);
