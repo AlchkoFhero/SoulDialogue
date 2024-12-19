@@ -47,7 +47,7 @@ export function Contact() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://souldialogue.top:3001/send-to-telegram', formData, { 
+      const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, { 
         headers: { 
           'Content-Type': 'application/json', 
           'x-api-key': process.env.API_KEY, 
