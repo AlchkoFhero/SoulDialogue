@@ -1,17 +1,81 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import axios from 'axios';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 export function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    message: '',
+  });
+  const [responseMessage, setResponseMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     AOS.init({
-      duration: 800, // Длительность анимации
-      easing: 'ease-in-out', // Плавность анимации
-      once: false, // Анимация запускается каждый раз
-      mirror: true, // Анимация срабатывает при прокрутке вверх
+      duration: 800,
+      easing: 'ease-in-out',
+      once: false,
+      mirror: true,
     });
   }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    const { name, phone, message } = formData;
+    if (!name.trim() || !phone.trim() || !message.trim()) {
+      setResponseMessage('Пожалуйста, заполните все поля.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResponseMessage('');
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://46.202.156.157:3001/send-to-telegram', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+           'x-api-key': process.env.API_KEY // или API_KEY, если переменная из .env
+        },
+      });
+
+      if (response.status === 200 && response.data.success) {
+        setResponseMessage('Сообщение успешно отправлено!');
+        setFormData({ name: '', phone: '', message: '' });
+      } else {
+        console.error('Ошибка сервера:', response.data.message);
+        setResponseMessage('Ошибка сервера. Попробуйте ещё раз.');
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Ошибка ответа от сервера:', error.response.data);
+        setResponseMessage(`Ошибка сервера: ${error.response.data.message || 'Неизвестная ошибка'}`);
+      } else if (error.request) {
+        console.error('Ошибка запроса:', error.request);
+        setResponseMessage('Ошибка сети. Проверьте подключение.');
+      } else {
+        console.error('Ошибка:', error.message);
+        setResponseMessage('Произошла ошибка. Попробуйте позже.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-purple-50 pt-24">
@@ -84,7 +148,7 @@ export function Contact() {
                   </span>
                 </div>
               </div>
-            </div>toyumv ser
+            </div>
           </div>
 
           {/* Форма */}
@@ -94,7 +158,7 @@ export function Contact() {
             data-aos-delay="200"
           >
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                   Ваше имя
@@ -102,6 +166,8 @@ export function Contact() {
                 <input
                   type="text"
                   id="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
@@ -112,49 +178,34 @@ export function Contact() {
                 <input
                   type="tel"
                   id="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
                   Сообщение
                 </label>
                 <textarea
                   id="message"
                   rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 ></textarea>
               </div>
               <button
                 type="submit"
                 className="w-full bg-purple-600 text-white rounded-md py-2 px-4 hover:bg-purple-700 transition-colors"
+                disabled={loading}
               >
-                Отправить
+                {loading ? 'Отправка...' : 'Отправить'}
               </button>
             </form>
-          </div>
-        </div>
-
-        {/* Карта */}
-        <div
-          className="bg-white rounded-lg shadow-lg p-8 mb-16"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Как нас найти</h2>
-          <div className="aspect-w-16 aspect-h-9">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2294.069579660365!2d52.2919104772957!3d54.90170097278106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x41605dbeb8772647%3A0xf8e0eb465efa16a0!2sUlitsa%20Lenina%2C%2052%2C%20Almetyevsk%2C%20Respublika%20Tatarstan%2C%20Russia%2C%20423450!5e0!3m2!1sen!2sil!4v1734402115848!5m2!1sen!2sil&language=ru"
-              width="100%"
-              height="450"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              className="rounded-lg"
-            ></iframe>
+            {responseMessage && (
+              <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
+            )}
           </div>
         </div>
       </div>
