@@ -50,17 +50,18 @@ export function Contact() {
       const response = await axios.post('http://46.202.156.157:3001/send-to-telegram', formData, {
         headers: {
           'Content-Type': 'application/json',
-           'x-api-key': process.env.API_KEY // или API_KEY, если переменная из .env
+           'x-api-key': process.env.API_KEY,
         },
+        withCredentials: true
       });
 
-      if (response.status === 200 && response.data.success) {
-        setResponseMessage('Сообщение успешно отправлено!');
+      if (response.data && response.data.success) {
+        setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
         setFormData({ name: '', phone: '', message: '' });
-      } else {
-        console.error('Ошибка сервера:', response.data.message);
-        setResponseMessage('Ошибка сервера. Попробуйте ещё раз.');
-      }
+        } else {
+         console.error('Ошибка сервера:', response.data.message);
+         setResponseMessage(response.data.message || 'Ошибка сервера. Попробуйте ещё раз.');
+        }
     } catch (error) {
       if (error.response) {
         console.error('Ошибка ответа от сервера:', error.response.data);
