@@ -52,7 +52,7 @@ export function Contact() {
           'Content-Type': 'application/json', 
           'x-api-key': process.env.API_KEY, 
         }, 
-        withCredentials: true, 
+        withCredentials: true,
       });
       
       if (response.data && response.data.success) {
