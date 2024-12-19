@@ -346,3 +346,8 @@ bashCopygit commit -m "✨ feat: add contact form validation
 - Add required fields highlighting"
 Давайте создадим этот шаблон для вашего проекта? Я помогу настроить и сделать первый коммит с использованием нового формата.
 Также могу показать, как настроить автоматическую проверку формата коммитов через pre-commit hooks. Интересно?
+
+
+
+
+https://aistudio.google.com/prompts/1SFdg7Zjb9KLO4uvCA0CpbA1T_I_CBqLK
