@@ -42,23 +42,14 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResponseMessage('');
-    if (!validateForm()) return;
-
     setLoading(true);
 
     try {
-      const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-      console.log('API Key from Env:', apiKey);
-
-      const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-        },
-        withCredentials: true,
+      const response = await axios.get('http://localhost:3001/send-to-telegram', {
+          withCredentials: true,
       });
 
-      if (response.data && response.data.success) {
+      if (response.data && response.data.message) {
         setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
         setFormData({ name: '', phone: '', message: '' });
       } else {
