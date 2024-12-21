@@ -47,15 +47,17 @@ export function Contact() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, 
-      { headers: 
-        { 
-          'Content-Type': 'application/json', 
-          'x-api-key': process.env.API_KEY, 
-        }, 
-        withCredentials: true, 
+      const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+      console.log('API Key from Env:', apiKey);
+
+      const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+        },
+        withCredentials: true,
       });
-          
+
       if (response.data && response.data.success) {
         setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
         setFormData({ name: '', phone: '', message: '' });
