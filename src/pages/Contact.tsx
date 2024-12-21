@@ -1,59 +1,188 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const bodyParser = require('body-parser');
-const app = express();
-const PORT = process.env.PORT || 3001;
-const allowedOrigin = 'https://souldialogue.netlify.app';
+import React, { useEffect, useState } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import axios from 'axios';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
-app.use(cors({
-  origin: allowedOrigin,
-  credentials: true
-}));
-app.use(bodyParser.json());
+export function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    message: '',
+  });
+  const [responseMessage, setResponseMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-
-app.post('/send-to-telegram', async (req, res) => {
-  const apiKey = req.get('x-api-key');
-
-  if (!apiKey) {
-    console.log("No apiKey provided");
-       return res.status(401).send({ message: 'No apiKey provided' });
-   }
-    console.log('apiKey:', apiKey);
-    console.log('process.env.API_KEY:', process.env.API_KEY);
-
-  if (apiKey !== API_KEY) {
-    return res.status(401).send({ message: 'Unauthorized' });
-  }
-  
-  const { name, phone, message } = req.body;
-
-  const text = `
-    📝 *Новая заявка с сайта*\n
-    👤 *Имя:* ${name}
-    📞 *Телефон:* ${phone}
-    ✉️ *Сообщение:* ${message}
-  `;
-
-  try {
-    await axios.post(TELEGRAM_API, {
-      chat_id: CHAT_ID,
-      text,
-      parse_mode: 'Markdown',
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: false,
+      mirror: true,
     });
-    res.status(200).json({ success: true, message: 'Сообщение отправлено в Telegram!' });
-  } catch (error) {
-    console.error('Ошибка отправки в Telegram:', error.message);
-    res.status(500).json({ success: false, message: 'Ошибка отправки сообщения.' });
-  }
-});
+  }, []);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log("API Key from Env:", apiKey); // Add this for debugging
-});
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    const { name, phone, message } = formData;
+    if (!name.trim() || !phone.trim() || !message.trim()) {
+      setResponseMessage('Пожалуйста, заполните все поля.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResponseMessage('');
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setResponseMessage(`API Key from Env: ${apiKey}`);
+      setLoading(false);
+
+  };
+
+  return (
+    <div className="min-h-screen bg-purple-50 pt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Заголовок */}
+        <div className="text-center mb-12" data-aos="fade-up">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакты</h1>
+          <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+            Свяжитесь с нами удобным для вас способом
+          </p>
+        </div>
+
+        {/* Контактные данные и форма */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          {/* Контакты */}
+          <div
+            className="bg-white rounded-lg shadow-lg p-8"
+            data-aos="fade-right"
+            data-aos-delay="200"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
+            <div className="space-y-6">
+              <div className="flex items-center">
+                <Phone className="w-6 h-6 text-purple-600" />
+                <a
+                  href="tel:+79179351851"
+                  className="ml-4 text-gray-600 hover:text-purple-600"
+                >
+                  +7 (917) 935-18-51
+                </a>
+              </div>
+              <div className="flex items-center">
+                <MessageCircle className="w-6 h-6 text-purple-600" />
+                <div className="ml-4 space-x-4">
+                  <a
+                    href="https://api.whatsapp.com/send?phone=79179351851"
+                    className="text-gray-600 hover:text-purple-600"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp
+                  </a>
+                  <a
+                    href="https://t.me/Valentina_mas5"
+                    className="text-gray-600 hover:text-purple-600"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Telegram
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <Mail className="w-6 h-6 text-purple-600" />
+                <a
+                  href="mailto:contact@dialog-dushi.ru"
+                  className="ml-4 text-gray-600 hover:text-purple-600"
+                >
+                  contact@dialog-dushi.ru
+                </a>
+              </div>
+              <div className="flex items-start">
+                <MapPin className="w-6 h-6 text-purple-600" />
+                <div className="ml-4">
+                  <span className="text-gray-600 block">
+                    г. Альметьевск, ул. Ленина, д. 52
+                  </span>
+                  <span className="text-gray-500 text-sm block mt-1">
+                    Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Форма */}
+          <div
+            className="bg-white rounded-lg shadow-lg p-8"
+            data-aos="fade-left"
+            data-aos-delay="200"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Ваше имя
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  Телефон
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                  Сообщение
+                </label>
+                <textarea
+                  id="message"
+                  rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-purple-600 text-white rounded-md py-2 px-4 hover:bg-purple-700 transition-colors"
+                disabled={loading}
+              >
+                {loading ? 'Отправка...' : 'Отправить'}
+              </button>
+            </form>
+            {responseMessage && (
+              <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
