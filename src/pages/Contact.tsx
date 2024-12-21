@@ -4,7 +4,7 @@ import 'aos/dist/aos.css';
 import axios from 'axios';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
-const Contact: React.FC = () => {
+export function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -12,7 +12,6 @@ const Contact: React.FC = () => {
   });
   const [responseMessage, setResponseMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
   useEffect(() => {
     AOS.init({
@@ -33,50 +32,49 @@ const Contact: React.FC = () => {
 
   const validateForm = () => {
     const { name, phone, message } = formData;
-    return !!(name.trim() && phone.trim() && message.trim());
+    if (!name.trim() || !phone.trim() || !message.trim()) {
+      setResponseMessage('Пожалуйста, заполните все поля.');
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResponseMessage('');
-
-    if (!validateForm()) {
-      setResponseMessage('Пожалуйста, заполните все поля.');
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
 
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-      console.log("API Key from Env (in handleSubmit):", apiKey);
+      console.log('API Key from Env:', apiKey);
 
-      const response = await axios.post(
-        'https://souldialogue.top/send-to-telegram',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+        },
+        withCredentials: true,
+      });
 
-      console.log('Success:', response.data);
-      setResponseMessage('Сообщение успешно отправлено!');
-      setFormData({ name: '', phone: '', message: '' });
-    } catch (error: any) {
-      console.error('Error sending message:', error);
-      setResponseMessage('Ошибка отправки сообщения. Пожалуйста, попробуйте еще раз.');
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Request:', error.request);
+      if (response.data && response.data.success) {
+        setResponseMessage(response.data.message || 'Сообщение успешно отправлено!');
+        setFormData({ name: '', phone: '', message: '' });
       } else {
-        console.error('Error message:', error.message);
+        console.error('Ошибка сервера:', response.data.message);
+        setResponseMessage(response.data.message || 'Ошибка сервера. Попробуйте ещё раз.');
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Ошибка ответа от сервера:', error.response.data);
+        setResponseMessage(`Ошибка сервера: ${error.response.data.message || 'Неизвестная ошибка'}`);
+      } else if (error.request) {
+        console.error('Ошибка запроса:', error.request);
+        setResponseMessage('Ошибка сети. Проверьте подключение.');
+      } else {
+        console.error('Ошибка:', error.message);
+        setResponseMessage('Произошла ошибка. Попробуйте позже.');
       }
     } finally {
       setLoading(false);
@@ -86,6 +84,7 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen bg-purple-50 pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Заголовок */}
         <div className="text-center mb-12" data-aos="fade-up">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакты</h1>
           <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
@@ -93,7 +92,9 @@ const Contact: React.FC = () => {
           </p>
         </div>
 
+        {/* Контактные данные и форма */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          {/* Контакты */}
           <div
             className="bg-white rounded-lg shadow-lg p-8"
             data-aos="fade-right"
@@ -154,6 +155,7 @@ const Contact: React.FC = () => {
             </div>
           </div>
 
+          {/* Форма */}
           <div
             className="bg-white rounded-lg shadow-lg p-8"
             data-aos="fade-left"
@@ -213,6 +215,4 @@ const Contact: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Contact;
+}
