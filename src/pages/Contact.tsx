@@ -42,8 +42,6 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResponseMessage('');
-    if (!validateForm()) return;
-
     setLoading(true);
 
     try {
