@@ -48,7 +48,7 @@ export function Contact() {
 
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-     console.log('API Key from Env:', apiKey);
+      console.log('API Key from Env:', apiKey);
       const response = await axios.post('https://souldialogue.top/send-to-telegram', formData, {
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ export function Contact() {
               </div>
             </div>
           </div>
-
+   
           {/* Форма */}
           <div
             className="bg-white rounded-lg shadow-lg p-8"
