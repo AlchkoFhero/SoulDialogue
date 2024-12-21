@@ -6,18 +6,25 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const allowedOrigin = 'https://souldialogue.netlify.app';
 
 app.use(cors({
-  origin: 'https://souldialogue.netlify.app',
-  credentials: true
+    origin: allowedOrigin,
+    credentials: true
 }));
-
 app.use(bodyParser.json());
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const API_KEY = process.env.API_KEY;
 
 app.post('/send-to-telegram', async (req, res) => {
+    const apiKey = req.headers['x-api-key'];
+
+    if (apiKey !== API_KEY) {
+        return res.status(401).send({ message: 'Unauthorized' });
+    }
+
   const { name, phone, message } = req.body;
 
   const text = `
