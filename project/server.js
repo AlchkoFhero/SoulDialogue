@@ -19,7 +19,7 @@ const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const API_KEY = process.env.API_KEY;
 
 app.post('/send-to-telegram', async (req, res) => {
-    const apiKey = req.headers['x-api-key'];
+    const apiKey = req.get('x-api-key');
 
     if (apiKey !== API_KEY) {
         return res.status(401).send({ message: 'Unauthorized' });
