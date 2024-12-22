@@ -144,17 +144,6 @@ export function Contact() {
                   г. Альметьевск, ул. Ленина, д. 52
                 </span>
               </div>
-              <div className="mt-8">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233667.82239216384!2d90.27923836718749!3d23.78057325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b858f1f52dd7%3A0xb1c1da83e4f8f5b5!2sGoogle!5e0!3m2!1sen!2sbd!4v1614233772878!5m2!1sen!2sbd"
-                  width="100%"
-                  height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  aria-hidden="false"
-                  tabIndex="0"
-                ></iframe>
-              </div>
             </div>
           </div>
 
