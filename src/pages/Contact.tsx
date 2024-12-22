@@ -1,5 +1,13 @@
+
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+
+const messages = {
+  success: 'Сообщение успешно отправлено!',
+  honeypot: 'Ошибка. Форма не отправлена.',
+  validationError: 'Пожалуйста, заполните все поля.',
+  serverError: 'Ошибка сервера. Попробуйте позже.',
+};
 
 function checkHoneypot() {
   const honeypotField = document.querySelector('input[name="honeypot"]');
@@ -30,12 +38,12 @@ export function Contact() {
     // Honeypot check
     if (checkHoneypot()) {
       console.log('Спам-бот попытался отправить форму.');
-      setResponseMessage('Ошибка. Форма не отправлена.');
+      setResponseMessage(messages.honeypot);
       return;
     }
 
     if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
-      setResponseMessage('Пожалуйста, заполните все поля.');
+      setResponseMessage(messages.validationError);
       return;
     }
 
@@ -47,7 +55,7 @@ export function Contact() {
 
       if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
         console.error('Ошибка: Переменные окружения для Telegram не настроены.');
-        setResponseMessage('Ошибка сервера. Попробуйте позже.');
+        setResponseMessage(messages.serverError);
         return;
       }
 
@@ -63,14 +71,14 @@ export function Contact() {
       `;
 
       const response = await fetch(
-        `https://api.telegram.org/bot${VITE_TELEGRAM_BOT_TOKEN}/sendMessage`,
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            chat_id: VITE_TELEGRAM_CHAT_ID,
+            chat_id: TELEGRAM_CHAT_ID,
             text: message,
           }),
         }
@@ -79,15 +87,15 @@ export function Contact() {
       if (!response.ok) {
         const error = await response.json();
         console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
-        setResponseMessage(`Ошибка: ${error.description || 'Попробуйте позже.'}`);
+        setResponseMessage(`Ошибка: ${error.description || messages.serverError}`);
         return;
       }
 
-      setResponseMessage('Сообщение успешно отправлено!');
+      setResponseMessage(messages.success);
       setFormData({ name: '', phone: '', message: '' });
     } catch (error) {
       console.error('Ошибка отправки:', error.message || error);
-      setResponseMessage(`Ошибка: ${error.message || 'Попробуйте позже.'}`);
+      setResponseMessage(`Ошибка: ${error.message || messages.serverError}`);
     } finally {
       setLoading(false);
     }
