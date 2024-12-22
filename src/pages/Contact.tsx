@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { Phone, MapPin, MessageCircle } from 'lucide-react';
+import { Phone, MapPin, MessageCircle, Clock } from 'lucide-react';
 
 export function Contact() {
   useEffect(() => {
     AOS.init({
       duration: 800,
       easing: 'ease-in-out',
-      once: true, // Избегаем повторных анимаций
-      mirror: false, // Убираем анимацию при скролле назад
+      once: false, // Анимация при каждом появлении элемента
+      mirror: true, // Повтор анимации при прокрутке вверх
     });
   }, []);
 
@@ -106,10 +106,19 @@ export function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-right" data-aos-delay="200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
-            <div className="space-y-4">
+            <div className="space-y-6">
+              <div className="flex items-center">
+                <Phone className="w-6 h-6 text-purple-600" />
+                <a
+                  href="tel:+79179351851"
+                  className="ml-4 text-gray-600 hover:text-purple-600 text-lg font-medium"
+                >
+                  +7 (917) 935-18-51
+                </a>
+              </div>
               <a
                 href="https://api.whatsapp.com/send?phone=79179351851"
-                className="flex items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center px-5 py-3 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg hover:from-green-500 hover:to-green-700 transition-transform transform hover:scale-105 shadow-lg"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -117,7 +126,7 @@ export function Contact() {
               </a>
               <a
                 href="https://t.me/Valentina_mas5"
-                className="flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center px-5 py-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg hover:from-blue-500 hover:to-blue-700 transition-transform transform hover:scale-105 shadow-lg"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -126,8 +135,28 @@ export function Contact() {
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
-                  <p className="text-gray-600">г. Альметьевск, ул. Ленина, д. 52</p>
-                  <p className="text-gray-500 text-sm">Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00</p>
+                  <p className="text-gray-600 text-lg font-medium">г. Альметьевск, ул. Ленина, д. 52</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <Clock className="w-6 h-6 text-purple-600" />
+                <div className="ml-4">
+                  <table className="text-gray-600 text-sm">
+                    <tbody>
+                      <tr>
+                        <td className="pr-4 font-medium">Пн-Пт:</td>
+                        <td>9:00-20:00</td>
+                      </tr>
+                      <tr>
+                        <td className="pr-4 font-medium">Сб:</td>
+                        <td>10:00-18:00</td>
+                      </tr>
+                      <tr>
+                        <td className="pr-4 font-medium">Вс:</td>
+                        <td>Выходной</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -174,7 +203,7 @@ export function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white rounded-md py-2 px-4 hover:bg-purple-700 transition-colors"
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-md py-2 px-4 hover:from-purple-600 hover:to-purple-800 transition-transform transform hover:scale-105 shadow-lg"
                 disabled={loading}
               >
                 {loading ? 'Отправка...' : 'Отправить'}
