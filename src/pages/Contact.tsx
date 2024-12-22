@@ -103,8 +103,8 @@ export function Contact() {
   return (
     <section className="py-16 bg-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl" style={{ marginBottom: '1rem' }}>
             Свяжитесь с нами
           </h2>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
@@ -154,17 +154,6 @@ export function Contact() {
                 <span className="ml-4 text-gray-600">
                   г. Альметьевск, ул. Ленина, д. 52
                 </span>
-              </div>
-              <div className="mt-8">
-                <iframe
-                  title="Google Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.345284725793!2d-79.38393448446171!3d43.65348197912165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDPCsDM5JzEyLjUiTiA3OcKwMjInNTcuNCJX!5e0!3m2!1sen!2sca!4v1631699390606!5m2!1sen!2sca"
-                  width="100%"
-                  height="250"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                ></iframe>
               </div>
             </div>
           </div>
@@ -223,10 +212,18 @@ export function Contact() {
                 {loading ? 'Отправка...' : 'Отправить'}
               </button>
             </form>
-            {responseMessage && (
-              <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
-            )}
           </div>
+        </div>
+
+        <div className="mt-12">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233667.82239123394!2d90.27923768733803!3d23.7805732560597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374df36bd5b7dfc3%3A0x8c3c1980afc33a28!2sDhaka%20Division%2C%20Bangladesh!5e0!3m2!1sen!2sus!4v1604094646428!5m2!1sen!2sus"
+            width="100%"
+            height="450"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+          ></iframe>
         </div>
       </div>
     </section>
