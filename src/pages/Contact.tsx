@@ -25,9 +25,9 @@ export function Contact() {
     const { id, value } = e.target;
     if (id === 'phone') {
       const cleaned = value.replace(/[^\d+() -]/g, '');
-      setFormData(prev => ({ ...prev, phone: cleaned }));
+      setFormData((prev) => ({ ...prev, phone: cleaned }));
     } else {
-      setFormData(prev => ({ ...prev, [id]: value }));
+      setFormData((prev) => ({ ...prev, [id]: value }));
     }
   };
 
@@ -53,29 +53,30 @@ export function Contact() {
       }
 
       const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
-    
-       const message = `
+
+      const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
-      
+
 📆 ${new Date().toLocaleDateString('ru-RU').split('.').join('-')}
-⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0,5)}
-      
+⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0, 5)}
+
 👤 Имя: ${formData.name}
 📞 Телефон: ${formData.phone}
 ✉️ Сообщение: ${formData.message}
       `;
-    
-    const keyboard = {
-          inline_keyboard: [
-            [
-              {
-                  text: 'Добавить контакт',
-                  callback_data: 'add_contact',
-                  url: `tg://addcontact?phone_number=${cleanPhoneNumber}&first_name=${formData.name}`
-               }
-            ]
-          ]
-    }
+
+      const keyboard = {
+        inline_keyboard: [
+          [
+            {
+              text: '👤 Добавить контакт',
+              url: `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact?chat_id=${TELEGRAM_CHAT_ID}&phone_number=${cleanPhoneNumber}&first_name=${encodeURIComponent(
+                formData.name
+              )}`,
+            },
+          ],
+        ],
+      };
 
       const messageResponse = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -119,20 +120,12 @@ export function Contact() {
 
         {/* Контактные данные и форма */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Контакты */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-right"
-            data-aos-delay="200"
-          >
+          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-right" data-aos-delay="200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
             <div className="space-y-6">
               <div className="flex items-center">
                 <Phone className="w-6 h-6 text-purple-600" />
-                <a
-                  href="tel:+79179351851"
-                  className="ml-4 text-gray-600 hover:text-purple-600"
-                >
+                <a href="tel:+79179351851" className="ml-4 text-gray-600 hover:text-purple-600">
                   +7 (917) 935-18-51
                 </a>
               </div>
@@ -159,19 +152,14 @@ export function Contact() {
               </div>
               <div className="flex items-center">
                 <Mail className="w-6 h-6 text-purple-600" />
-                <a
-                  href="mailto:contact@dialog-dushi.ru"
-                  className="ml-4 text-gray-600 hover:text-purple-600"
-                >
+                <a href="mailto:contact@dialog-dushi.ru" className="ml-4 text-gray-600 hover:text-purple-600">
                   contact@dialog-dushi.ru
                 </a>
               </div>
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
-                  <span className="text-gray-600 block">
-                    г. Альметьевск, ул. Ленина, д. 52
-                  </span>
+                  <span className="text-gray-600 block">г. Альметьевск, ул. Ленина, д. 52</span>
                   <span className="text-gray-500 text-sm block mt-1">
                     Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00
                   </span>
@@ -181,11 +169,7 @@ export function Contact() {
           </div>
 
           {/* Форма */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-left"
-            data-aos-delay="200"
-          >
+          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-left" data-aos-delay="200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
             <form className="space-y-6" onSubmit={handleSubmit} data-netlify="true">
               <input type="hidden" name="form-name" value="contact" />
@@ -236,26 +220,6 @@ export function Contact() {
             {responseMessage && (
               <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
             )}
-          </div>
-        </div>
-
-        {/* Карта */}
-        <div
-          className="bg-white rounded-lg shadow-lg p-8 mb-16"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Как нас найти</h2>
-          <div className="aspect-w-16 aspect-h-9">
-            <iframe
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3Add690dd52bbe3d3d5274709c0a162d4c92ea93a886cb4f42ee0868cac94ebf43&source=constructor"
-              width="100%"
-              height="450"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              className="rounded-lg"
-            ></iframe>
           </div>
         </div>
       </div>
