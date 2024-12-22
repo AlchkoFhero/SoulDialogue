@@ -119,7 +119,7 @@ export function Contact() {
               </div>
               <a
                 href="https://api.whatsapp.com/send?phone=79179351851"
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-full hover:from-green-500 hover:to-green-700 transition-all shadow-sm"
+                className="flex items-center px-3 py-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-md hover:from-green-500 hover:to-green-700 transition-transform transform hover:scale-105 shadow-sm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -127,7 +127,7 @@ export function Contact() {
               </a>
               <a
                 href="https://t.me/Valentina_mas5"
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-full hover:from-blue-500 hover:to-blue-700 transition-all shadow-sm"
+                className="flex items-center px-3 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-md hover:from-blue-500 hover:to-blue-700 transition-transform transform hover:scale-105 shadow-sm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -204,7 +204,7 @@ export function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-md py-2 px-4 hover:from-purple-600 hover:to-purple-800 transition-transform transform hover:scale-105 shadow-lg"
+                className="w-full bg-gradient-to-r from-green-400 to-green-600 text-white rounded-md py-2 px-4 hover:from-green-500 hover:to-green-700 transition-all shadow-lg"
                 disabled={loading}
               >
                 {loading ? 'Отправка...' : 'Отправить'}
