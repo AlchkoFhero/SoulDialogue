@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import React, { useState } from 'react';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+
+function checkHoneypot() {
+  const honeypotField = document.querySelector('input[name="honeypot"]');
+  return honeypotField?.value;
+}
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -12,16 +15,7 @@ export function Contact() {
   const [responseMessage, setResponseMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: false,
-      mirror: true,
-    });
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -29,28 +23,21 @@ export function Contact() {
     }));
   };
 
-  const validateForm = () => {
-    const { name, phone, message } = formData;
-    if (!name.trim() || !phone.trim() || !message.trim()) {
-      setResponseMessage('Пожалуйста, заполните все поля.');
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setResponseMessage('');
 
-    // Проверяем Honeypot
-    const honeypotField = document.querySelector('input[name="honeypot"]') as HTMLInputElement;
-    if (honeypotField?.value) {
+    // Honeypot check
+    if (checkHoneypot()) {
       console.log('Спам-бот попытался отправить форму.');
       setResponseMessage('Ошибка. Форма не отправлена.');
       return;
     }
 
-    if (!validateForm()) return;
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
+      setResponseMessage('Пожалуйста, заполните все поля.');
+      return;
+    }
 
     setLoading(true);
 
@@ -62,16 +49,17 @@ export function Contact() {
         throw new Error('Переменные окружения для Telegram не настроены.');
       }
 
-      // Формируем сообщение
       const message = `
-📝 Новая заявка с сайта https://souldialogue.netlify.app
+📝 Новая заявка с сайта souldialogue.netlify.app
+
+📆 ${new Date().toLocaleDateString()}
+⏰ ${new Date().toLocaleTimeString()}
 
 👤 Имя: ${formData.name}
 📞 Телефон: ${formData.phone}
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // Отправляем запрос
       const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
@@ -93,7 +81,7 @@ export function Contact() {
 
       setResponseMessage('Сообщение успешно отправлено!');
       setFormData({ name: '', phone: '', message: '' });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Ошибка отправки:', error.message || error);
       setResponseMessage(`Ошибка: ${error.message || 'Попробуйте позже.'}`);
     } finally {
@@ -102,22 +90,20 @@ export function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-purple-50 pt-24">
+    <section className="py-16 bg-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12" data-aos="fade-up">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакты</h1>
-          <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
-            Свяжитесь с нами удобным для вас способом
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Свяжитесь с нами
+          </h2>
+          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
+            Мы всегда рады ответить на ваши вопросы
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-right"
-            data-aos-delay="200"
-          >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
+        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h3>
             <div className="space-y-6">
               <div className="flex items-center">
                 <Phone className="w-6 h-6 text-purple-600" />
@@ -148,33 +134,32 @@ export function Contact() {
               </div>
               <div className="flex items-center">
                 <Mail className="w-6 h-6 text-purple-600" />
-                <a
-                  href="mailto:contact@dialog-dushi.ru"
-                  className="ml-4 text-gray-600 hover:text-purple-600"
-                >
+                <a href="mailto:contact@dialog-dushi.ru" className="ml-4 text-gray-600 hover:text-purple-600">
                   contact@dialog-dushi.ru
                 </a>
               </div>
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
-                <div className="ml-4">
-                  <span className="text-gray-600 block">
-                    г. Альметьевск, ул. Ленина, д. 52
-                  </span>
-                  <span className="text-gray-500 text-sm block mt-1">
-                    Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00
-                  </span>
-                </div>
+                <span className="ml-4 text-gray-600">
+                  г. Альметьевск, ул. Ленина, д. 52
+                </span>
+              </div>
+              <div className="mt-8">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233667.82239216384!2d90.27923836718749!3d23.78057325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b858f1f52dd7%3A0xb1c1da83e4f8f5b5!2sGoogle!5e0!3m2!1sen!2sbd!4v1614233772878!5m2!1sen!2sbd"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  aria-hidden="false"
+                  tabIndex="0"
+                ></iframe>
               </div>
             </div>
           </div>
 
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-left"
-            data-aos-delay="200"
-          >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h3>
             <form className="space-y-6" onSubmit={handleSubmit}>
               <input type="hidden" name="form-name" value="contact" />
               <div style={{ display: 'none' }}>
@@ -190,7 +175,6 @@ export function Contact() {
                 <input
                   type="text"
                   id="name"
-                  name="name"
                   value={formData.name}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
@@ -203,7 +187,6 @@ export function Contact() {
                 <input
                   type="tel"
                   id="phone"
-                  name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
@@ -215,7 +198,6 @@ export function Contact() {
                 </label>
                 <textarea
                   id="message"
-                  name="message"
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
@@ -236,6 +218,6 @@ export function Contact() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
