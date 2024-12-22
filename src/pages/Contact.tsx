@@ -11,6 +11,7 @@ export function Contact() {
       once: false, // Анимация при каждом появлении элемента
       mirror: true, // Повтор анимации при прокрутке вверх
     });
+    AOS.refresh(); // Обновляем анимации при загрузке
   }, []);
 
   const [formData, setFormData] = useState({
@@ -118,19 +119,19 @@ export function Contact() {
               </div>
               <a
                 href="https://api.whatsapp.com/send?phone=79179351851"
-                className="flex items-center px-5 py-3 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg hover:from-green-500 hover:to-green-700 transition-transform transform hover:scale-105 shadow-lg"
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-full hover:from-green-500 hover:to-green-700 transition-all shadow-sm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle className="w-6 h-6 mr-3" /> WhatsApp
+                <MessageCircle className="w-5 h-5 mr-2" /> WhatsApp
               </a>
               <a
                 href="https://t.me/Valentina_mas5"
-                className="flex items-center px-5 py-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg hover:from-blue-500 hover:to-blue-700 transition-transform transform hover:scale-105 shadow-lg"
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-full hover:from-blue-500 hover:to-blue-700 transition-all shadow-sm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle className="w-6 h-6 mr-3" /> Telegram
+                <MessageCircle className="w-5 h-5 mr-2" /> Telegram
               </a>
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
