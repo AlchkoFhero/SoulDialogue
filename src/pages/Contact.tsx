@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Phone, MapPin, MessageCircle } from 'lucide-react';
 
 export function Contact() {
   useEffect(() => {
     AOS.init({
       duration: 800,
       easing: 'ease-in-out',
-      once: false,
-      mirror: true,
+      once: true, // Избегаем повторных анимаций
+      mirror: false, // Убираем анимацию при скролле назад
     });
   }, []);
 
@@ -24,11 +24,10 @@ export function Contact() {
   const handleChange = (e) => {
     const { id, value } = e.target;
     if (id === 'phone') {
-      // Оставляем только цифры, +, (), пробелы и дефисы
       const cleaned = value.replace(/[^\d+() -]/g, '');
-      setFormData(prev => ({ ...prev, phone: cleaned }));
+      setFormData((prev) => ({ ...prev, phone: cleaned }));
     } else {
-      setFormData(prev => ({ ...prev, [id]: value }));
+      setFormData((prev) => ({ ...prev, [id]: value }));
     }
   };
 
@@ -53,22 +52,20 @@ export function Contact() {
         return;
       }
 
-      // Очищаем номер от всего кроме цифр и добавляем +
       const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
 
 📆 ${new Date().toLocaleDateString('ru-RU').split('.').join('-')}
-⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0,5)}
+⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0, 5)}
 
 👤 Имя: ${formData.name}
 📞 Телефон: ${formData.phone}
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // Отправляем основное сообщение
-      const messageResponse = await fetch(
+      const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -82,28 +79,8 @@ export function Contact() {
         }
       );
 
-      if (!messageResponse.ok) {
+      if (!response.ok) {
         throw new Error('Ошибка отправки сообщения');
-      }
-
-      // Отправляем контакт
-      const contactResponse = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            phone_number: cleanPhoneNumber,
-            first_name: formData.name
-          }),
-        }
-      );
-
-      if (!contactResponse.ok) {
-        console.error('Ошибка отправки контакта');
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
@@ -119,7 +96,6 @@ export function Contact() {
   return (
     <div className="min-h-screen bg-purple-50 pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Заголовок */}
         <div className="text-center mb-12" data-aos="fade-up">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакты</h1>
           <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
@@ -127,78 +103,39 @@ export function Contact() {
           </p>
         </div>
 
-        {/* Контактные данные и форма */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Контакты */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-right"
-            data-aos-delay="200"
-          >
+          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-right" data-aos-delay="200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
-            <div className="space-y-6">
-              <div className="flex items-center">
-                <Phone className="w-6 h-6 text-purple-600" />
-                <a
-                  href="tel:+79179351851"
-                  className="ml-4 text-gray-600 hover:text-purple-600"
-                >
-                  +7 (917) 935-18-51
-                </a>
-              </div>
-              <div className="flex items-center">
-                <MessageCircle className="w-6 h-6 text-purple-600" />
-                <div className="ml-4 space-x-4">
-                  <a
-                    href="https://api.whatsapp.com/send?phone=79179351851"
-                    className="text-gray-600 hover:text-purple-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    WhatsApp
-                  </a>
-                  <a
-                    href="https://t.me/Valentina_mas5"
-                    className="text-gray-600 hover:text-purple-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Telegram
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Mail className="w-6 h-6 text-purple-600" />
-                <a
-                  href="mailto:contact@dialog-dushi.ru"
-                  className="ml-4 text-gray-600 hover:text-purple-600"
-                >
-                  contact@dialog-dushi.ru
-                </a>
-              </div>
+            <div className="space-y-4">
+              <a
+                href="https://api.whatsapp.com/send?phone=79179351851"
+                className="flex items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="w-6 h-6 mr-3" /> WhatsApp
+              </a>
+              <a
+                href="https://t.me/Valentina_mas5"
+                className="flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="w-6 h-6 mr-3" /> Telegram
+              </a>
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
-                  <span className="text-gray-600 block">
-                    г. Альметьевск, ул. Ленина, д. 52
-                  </span>
-                  <span className="text-gray-500 text-sm block mt-1">
-                    Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00
-                  </span>
+                  <p className="text-gray-600">г. Альметьевск, ул. Ленина, д. 52</p>
+                  <p className="text-gray-500 text-sm">Режим работы: Пн-Пт 9:00-20:00, Сб 10:00-18:00</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Форма */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-8"
-            data-aos="fade-left"
-            data-aos-delay="200"
-          >
+          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-left" data-aos-delay="200">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
-            <form className="space-y-6" onSubmit={handleSubmit} data-netlify="true">
-              <input type="hidden" name="form-name" value="contact" />
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                   Ваше имя
@@ -249,7 +186,6 @@ export function Contact() {
           </div>
         </div>
 
-        {/* Карта */}
         <div
           className="bg-white rounded-lg shadow-lg p-8 mb-16"
           data-aos="fade-up"
