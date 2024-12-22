@@ -50,14 +50,8 @@ export function Contact() {
         return;
       }
 
-      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
-
-      // Создаем vCard
-      const vCard = `BEGIN:VCARD
-VERSION:3.0
-FN:${formData.name}
-TEL;TYPE=CELL:${cleanPhoneNumber}
-END:VCARD`;
+      // Очищаем номер от всего кроме цифр
+      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -70,8 +64,7 @@ END:VCARD`;
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // Сначала отправляем основное сообщение
-      const messageResponse = await fetch(
+      const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -86,7 +79,7 @@ END:VCARD`;
               inline_keyboard: [[
                 {
                   text: "👤 Добавить контакт",
-                  url: `tg://msg?attach=${encodeURIComponent(vCard)}&text=${encodeURIComponent('Контакт клиента')}`
+                  url: `tg://resolve?domain=share/contact&phone=${cleanPhoneNumber}&name=${encodeURIComponent(formData.name)}`
                 }
               ]]
             }
@@ -94,26 +87,12 @@ END:VCARD`;
         }
       );
 
-      if (!messageResponse.ok) {
-        const error = await messageResponse.json();
+      if (!response.ok) {
+        const error = await response.json();
         console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
         setResponseMessage(`Ошибка: ${error.description || 'Ошибка сервера. Попробуйте позже.'}`);
         return;
       }
-
-      // Отправляем vCard как документ
-      const formData = new FormData();
-      const vCardBlob = new Blob([vCard], { type: 'text/vcard' });
-      formData.append('chat_id', TELEGRAM_CHAT_ID);
-      formData.append('document', vCardBlob, 'contact.vcf');
-      
-      await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
 
       setResponseMessage('Сообщение успешно отправлено!');
       setFormData({ name: '', phone: '', message: '' });
