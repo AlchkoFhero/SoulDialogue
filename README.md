@@ -41,9 +41,6 @@ SITE: souldialogue.top
 https://souldialogue.netlify.app/
 
 
-Run site locally:
-npx vite preview --port 3000
-
 
 
 Запуск проекта В StackBlitz терминале выполни команду:
