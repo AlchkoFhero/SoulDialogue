@@ -6,10 +6,10 @@ import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 export function Contact() {
   useEffect(() => {
     AOS.init({
-      duration: 800, // Длительность анимации
-      easing: 'ease-in-out', // Плавность анимации
-      once: false, // Анимация запускается каждый раз
-      mirror: true, // Анимация срабатывает при прокрутке вверх
+      duration: 800,
+      easing: 'ease-in-out',
+      once: false,
+      mirror: true,
     });
   }, []);
 
@@ -50,6 +50,8 @@ export function Contact() {
         return;
       }
 
+      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
+
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
 
@@ -71,6 +73,14 @@ export function Contact() {
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
             text: message,
+            reply_markup: {
+              inline_keyboard: [[
+                {
+                  text: "Сохранить контакт",
+                  url: `tg://contact?phone=${cleanPhoneNumber}&name=${encodeURIComponent(formData.name)}`
+                }
+              ]]
+            }
           }),
         }
       );
@@ -248,4 +258,3 @@ export function Contact() {
     </div>
   );
 }
-
