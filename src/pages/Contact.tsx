@@ -53,8 +53,8 @@ export function Contact() {
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
 
-📆 ${new Date().toLocaleDateString()}
-⏰ ${new Date().toLocaleTimeString()}
+📆 ${new Date().toLocaleDateString('ru-RU').split('.').join('-')}
+⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0,5)}
 
 👤 Имя: ${formData.name}
 📞 Телефон: ${formData.phone}
@@ -234,7 +234,7 @@ export function Contact() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Как нас найти</h2>
           <div className="aspect-w-16 aspect-h-9">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2294.069579660365!2d52.2919104772957!3d54.90170097278106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x41605dbeb8772647%3A0xf8e0eb465efa16a0!2sUlitsa%20Lenina%2C%2052%2C%20Almetyevsk%2C%20Respublika%20Tatarstan%2C%20Russia%2C%20423450!5e0!3m2!1sen!2sil!4v1734402115848!5m2!1sen!2sil&language=ru"
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3Add690dd52bbe3d3d5274709c0a162d4c92ea93a886cb4f42ee0868cac94ebf43&amp;source=constructor"
               width="100%"
               height="450"
               style={{ border: 0 }}
