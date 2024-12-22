@@ -248,3 +248,4 @@ export function Contact() {
     </div>
   );
 }
+
