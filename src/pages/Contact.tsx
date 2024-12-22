@@ -52,7 +52,7 @@ export function Contact() {
         return;
       }
 
-      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
+      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -65,7 +65,6 @@ export function Contact() {
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // 1. Отправляем сообщение с кнопкой
       const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
@@ -81,7 +80,7 @@ export function Contact() {
                 [
                   {
                     text: '👤 Добавить контакт',
-                    callback_data: 'add_contact',
+                    url: `tg://addcontact?phone_number=${cleanPhoneNumber}&first_name=${formData.name}`,
                   },
                 ],
               ],
@@ -91,27 +90,7 @@ export function Contact() {
       );
 
       if (!response.ok) {
-        throw new Error('Ошибка отправки текстового сообщения');
-      }
-
-      // 2. Отправляем контакт
-      const contactResponse = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            phone_number: `+${cleanPhoneNumber}`,
-            first_name: formData.name,
-          }),
-        }
-      );
-
-      if (!contactResponse.ok) {
-        throw new Error('Ошибка отправки контакта');
+        throw new Error('Ошибка отправки сообщения в Telegram');
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
