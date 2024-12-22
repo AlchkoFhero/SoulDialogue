@@ -50,7 +50,7 @@ export function Contact() {
         return;
       }
 
-      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
+      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -63,8 +63,7 @@ export function Contact() {
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // Отправляем основное сообщение
-      const messageResponse = await fetch(
+      const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -73,36 +72,25 @@ export function Contact() {
           },
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
-            text: message
+            text: message,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [[
+                {
+                  text: "👤 Добавить контакт",
+                  url: `tg://add_contact?phone=${cleanPhoneNumber}&first_name=${encodeURIComponent(formData.name)}`
+                }
+              ]]
+            }
           }),
         }
       );
 
-      if (!messageResponse.ok) {
-        const error = await messageResponse.json();
-        throw new Error(error.description || 'Ошибка отправки сообщения');
-      }
-
-      // Отправляем контакт отдельным сообщением
-      const contactResponse = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            phone_number: cleanPhoneNumber,
-            first_name: formData.name
-          }),
-        }
-      );
-
-      if (!contactResponse.ok) {
-        const error = await contactResponse.json();
-        console.error('Ошибка отправки контакта:', error.description || 'Неизвестная ошибка.');
-        // Продолжаем выполнение, так как основное сообщение уже отправлено
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
+        setResponseMessage(`Ошибка: ${error.description || 'Ошибка сервера. Попробуйте позже.'}`);
+        return;
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
