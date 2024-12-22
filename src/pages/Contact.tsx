@@ -56,6 +56,27 @@ export function Contact() {
       // Очищаем номер от всего кроме цифр и добавляем +
       const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
+      // Отправляем контакт
+      const contactResponse = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            phone_number: cleanPhoneNumber,
+            first_name: formData.name
+          }),
+        }
+      );
+
+      if (!contactResponse.ok) {
+        throw new Error('Ошибка отправки контакта');
+      }
+
+      // Отправляем сообщение с информацией
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
 
@@ -67,8 +88,7 @@ export function Contact() {
 ✉️ Сообщение: ${formData.message}
       `;
 
-      // Отправляем сообщение с кнопкой
-      const response = await fetch(
+      const messageResponse = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -77,29 +97,13 @@ export function Contact() {
           },
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: 'HTML',
-            reply_markup: {
-              inline_keyboard: [[
-                {
-                  text: "👤 Сохранить контакт",
-                  callback_data: JSON.stringify({
-                    action: "save_contact",
-                    phone: cleanPhoneNumber,
-                    name: formData.name
-                  })
-                }
-              ]]
-            }
+            text: message
           }),
         }
       );
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
-        setResponseMessage(`Ошибка: ${error.description || 'Ошибка сервера. Попробуйте позже.'}`);
-        return;
+      if (!messageResponse.ok) {
+        throw new Error('Ошибка отправки сообщения');
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
