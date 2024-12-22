@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
@@ -12,6 +12,85 @@ export function Contact() {
       mirror: true, // Анимация срабатывает при прокрутке вверх
     });
   }, []);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    message: '',
+  });
+  const [responseMessage, setResponseMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setResponseMessage('');
+
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
+      setResponseMessage('Пожалуйста, заполните все поля.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+      const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+
+      if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+        console.error('Ошибка: Переменные окружения для Telegram не настроены.');
+        setResponseMessage('Ошибка сервера. Попробуйте позже.');
+        return;
+      }
+
+      const message = `
+📝 Новая заявка с сайта souldialogue.netlify.app
+
+📆 ${new Date().toLocaleDateString()}
+⏰ ${new Date().toLocaleTimeString()}
+
+👤 Имя: ${formData.name}
+📞 Телефон: ${formData.phone}
+✉️ Сообщение: ${formData.message}
+      `;
+
+      const response = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
+        setResponseMessage(`Ошибка: ${error.description || 'Ошибка сервера. Попробуйте позже.'}`);
+        return;
+      }
+
+      setResponseMessage('Сообщение успешно отправлено!');
+      setFormData({ name: '', phone: '', message: '' });
+    } catch (error) {
+      console.error('Ошибка отправки:', error.message || error);
+      setResponseMessage('Ошибка сервера. Попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-purple-50 pt-24">
@@ -94,7 +173,8 @@ export function Contact() {
             data-aos-delay="200"
           >
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit} data-netlify="true">
+              <input type="hidden" name="form-name" value="contact" />
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                   Ваше имя
@@ -102,6 +182,8 @@ export function Contact() {
                 <input
                   type="text"
                   id="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
@@ -112,29 +194,34 @@ export function Contact() {
                 <input
                   type="tel"
                   id="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
                   Сообщение
                 </label>
                 <textarea
                   id="message"
                   rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                 ></textarea>
               </div>
               <button
                 type="submit"
                 className="w-full bg-purple-600 text-white rounded-md py-2 px-4 hover:bg-purple-700 transition-colors"
+                disabled={loading}
               >
-                Отправить
+                {loading ? 'Отправка...' : 'Отправить'}
               </button>
             </form>
+            {responseMessage && (
+              <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
+            )}
           </div>
         </div>
 
