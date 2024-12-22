@@ -65,19 +65,7 @@ export function Contact() {
 ✉️ Сообщение: ${formData.message}
       `;
 
-      const keyboard = {
-        inline_keyboard: [
-          [
-            {
-              text: '👤 Добавить контакт',
-              url: `tg://resolve?domain=add_contact&phone=${cleanPhoneNumber}&first_name=${encodeURIComponent(
-                formData.name
-              )}`,
-            },
-          ],
-        ],
-      };
-
+      // 1. Отправляем сообщение с кнопкой
       const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
@@ -88,13 +76,42 @@ export function Contact() {
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
             text: message,
-            reply_markup: keyboard,
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: '👤 Добавить контакт',
+                    callback_data: 'add_contact',
+                  },
+                ],
+              ],
+            },
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error('Ошибка отправки сообщения');
+        throw new Error('Ошибка отправки текстового сообщения');
+      }
+
+      // 2. Отправляем контакт
+      const contactResponse = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            phone_number: `+${cleanPhoneNumber}`,
+            first_name: formData.name,
+          }),
+        }
+      );
+
+      if (!contactResponse.ok) {
+        throw new Error('Ошибка отправки контакта');
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
