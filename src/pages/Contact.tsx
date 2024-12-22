@@ -50,7 +50,7 @@ export function Contact() {
         return;
       }
 
-      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
+      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -78,7 +78,7 @@ export function Contact() {
               inline_keyboard: [[
                 {
                   text: "👤 Добавить контакт",
-                  url: `tg://add_contact?phone=${cleanPhoneNumber}&first_name=${encodeURIComponent(formData.name)}`
+                  url: `https://t.me/share/phone?phone=${encodeURIComponent(cleanPhoneNumber)}&first_name=${encodeURIComponent(formData.name)}`
                 }
               ]]
             }
