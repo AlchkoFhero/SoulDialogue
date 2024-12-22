@@ -52,7 +52,7 @@ export function Contact() {
         return;
       }
 
-      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
+      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -70,7 +70,7 @@ export function Contact() {
           [
             {
               text: '👤 Добавить контакт',
-              url: `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact?chat_id=${TELEGRAM_CHAT_ID}&phone_number=${cleanPhoneNumber}&first_name=${encodeURIComponent(
+              url: `tg://resolve?domain=add_contact&phone=${cleanPhoneNumber}&first_name=${encodeURIComponent(
                 formData.name
               )}`,
             },
@@ -78,7 +78,7 @@ export function Contact() {
         ],
       };
 
-      const messageResponse = await fetch(
+      const response = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -93,7 +93,7 @@ export function Contact() {
         }
       );
 
-      if (!messageResponse.ok) {
+      if (!response.ok) {
         throw new Error('Ошибка отправки сообщения');
       }
 
