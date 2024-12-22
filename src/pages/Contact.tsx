@@ -23,10 +23,13 @@ export function Contact() {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    if (id === 'phone') {
+      // Оставляем только цифры, +, (), пробелы и дефисы
+      const cleaned = value.replace(/[^\d+() -]/g, '');
+      setFormData(prev => ({ ...prev, phone: cleaned }));
+    } else {
+      setFormData(prev => ({ ...prev, [id]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -50,8 +53,8 @@ export function Contact() {
         return;
       }
 
-      // Очищаем номер от всего кроме цифр
-      const cleanPhoneNumber = formData.phone.replace(/\D/g, '');
+      // Очищаем номер от всего кроме цифр и добавляем +
+      const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
@@ -64,7 +67,8 @@ export function Contact() {
 ✉️ Сообщение: ${formData.message}
       `;
 
-      const response = await fetch(
+      // Отправляем основное сообщение
+      const messageResponse = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
@@ -74,24 +78,32 @@ export function Contact() {
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
             text: message,
-            parse_mode: 'HTML',
-            reply_markup: {
-              inline_keyboard: [[
-                {
-                  text: "👤 Добавить контакт",
-                  url: `tg://resolve?domain=share/contact&phone=${cleanPhoneNumber}&name=${encodeURIComponent(formData.name)}`
-                }
-              ]]
-            }
           }),
         }
       );
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
-        setResponseMessage(`Ошибка: ${error.description || 'Ошибка сервера. Попробуйте позже.'}`);
-        return;
+      if (!messageResponse.ok) {
+        throw new Error('Ошибка отправки сообщения');
+      }
+
+      // Отправляем контакт
+      const contactResponse = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            phone_number: cleanPhoneNumber,
+            first_name: formData.name
+          }),
+        }
+      );
+
+      if (!contactResponse.ok) {
+        console.error('Ошибка отправки контакта');
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
