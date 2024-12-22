@@ -24,7 +24,6 @@ export function Contact() {
   const handleChange = (e) => {
     const { id, value } = e.target;
     if (id === 'phone') {
-      // Оставляем только цифры, +, (), пробелы и дефисы
       const cleaned = value.replace(/[^\d+() -]/g, '');
       setFormData(prev => ({ ...prev, phone: cleaned }));
     } else {
@@ -53,40 +52,30 @@ export function Contact() {
         return;
       }
 
-      // Очищаем номер от всего кроме цифр и добавляем +
       const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
-
-      // Отправляем контакт
-      const contactResponse = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            phone_number: cleanPhoneNumber,
-            first_name: formData.name
-          }),
-        }
-      );
-
-      if (!contactResponse.ok) {
-        throw new Error('Ошибка отправки контакта');
-      }
-
-      // Отправляем сообщение с информацией
-      const message = `
+    
+       const message = `
 📝 Новая заявка с сайта souldialogue.netlify.app
-
+      
 📆 ${new Date().toLocaleDateString('ru-RU').split('.').join('-')}
 ⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0,5)}
-
+      
 👤 Имя: ${formData.name}
 📞 Телефон: ${formData.phone}
 ✉️ Сообщение: ${formData.message}
       `;
+    
+    const keyboard = {
+          inline_keyboard: [
+            [
+              {
+                  text: 'Добавить контакт',
+                  callback_data: 'add_contact',
+                  url: `tg://addcontact?phone_number=${cleanPhoneNumber}&first_name=${formData.name}`
+               }
+            ]
+          ]
+    }
 
       const messageResponse = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -97,7 +86,8 @@ export function Contact() {
           },
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
-            text: message
+            text: message,
+            reply_markup: keyboard,
           }),
         }
       );
@@ -258,7 +248,7 @@ export function Contact() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Как нас найти</h2>
           <div className="aspect-w-16 aspect-h-9">
             <iframe
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3Add690dd52bbe3d3d5274709c0a162d4c92ea93a886cb4f42ee0868cac94ebf43&amp;source=constructor"
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3Add690dd52bbe3d3d5274709c0a162d4c92ea93a886cb4f42ee0868cac94ebf43&source=constructor"
               width="100%"
               height="450"
               style={{ border: 0 }}
