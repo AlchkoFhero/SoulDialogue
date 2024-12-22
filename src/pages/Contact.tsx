@@ -50,6 +50,7 @@ export function Contact() {
         return;
       }
 
+      // Убираем все нецифровые символы и добавляем +
       const cleanPhoneNumber = '+' + formData.phone.replace(/\D/g, '');
 
       const message = `
@@ -78,7 +79,7 @@ export function Contact() {
               inline_keyboard: [[
                 {
                   text: "👤 Добавить контакт",
-                  url: `https://t.me/share/phone?phone=${encodeURIComponent(cleanPhoneNumber)}&first_name=${encodeURIComponent(formData.name)}`
+                  url: `tg://contacts/add?phone=${cleanPhoneNumber.slice(1)}&first_name=${encodeURIComponent(formData.name)}`
                 }
               ]]
             }
