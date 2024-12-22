@@ -135,7 +135,7 @@ export function Contact() {
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 text-purple-600" />
                 <div className="ml-4">
-                  <p className="text-gray-600 text-lg font-medium">г. Альметьевск, ул. Ленина, д. 52</p>
+                  <p className="text-gray-600 text-lg font-medium">г. Альметьевск, ул. Мира, д. 2</p>
                 </div>
               </div>
               <div className="flex items-start">
