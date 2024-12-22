@@ -46,7 +46,9 @@ export function Contact() {
       const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
       if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-        throw new Error('Переменные окружения для Telegram не настроены.');
+        console.error('Ошибка: Переменные окружения для Telegram не настроены.');
+        setResponseMessage('Ошибка сервера. Попробуйте позже.');
+        return;
       }
 
       const message = `
@@ -61,14 +63,14 @@ export function Contact() {
       `;
 
       const response = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        `https://api.telegram.org/bot${VITE_TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
+            chat_id: VITE_TELEGRAM_CHAT_ID,
             text: message,
           }),
         }
@@ -76,7 +78,9 @@ export function Contact() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.description || 'Ошибка отправки в Telegram');
+        console.error('Ошибка отправки:', error.description || 'Неизвестная ошибка.');
+        setResponseMessage(`Ошибка: ${error.description || 'Попробуйте позже.'}`);
+        return;
       }
 
       setResponseMessage('Сообщение успешно отправлено!');
@@ -149,7 +153,7 @@ export function Contact() {
 
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h3>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleSubmit} data-netlify="true">
               <input type="hidden" name="form-name" value="contact" />
               <div style={{ display: 'none' }}>
                 <label>
