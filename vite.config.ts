@@ -9,23 +9,24 @@ export default defineConfig({
       targets: [
         {
           src: '_redirects',
-          dest: '' // Поместить файл в корень папки dist
+          dest: ''
         }
       ]
     })
   ],
-  base: './', // Добавляем эту строку для корректных путей
+  base: '/',  // изменено с './'
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name].[ext]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js'
+      }
+    }
+  },
   server: {
     port: 3000,
     host: true
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        manualChunks: undefined
-      }
-    }
   }
 });
