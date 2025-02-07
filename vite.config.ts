@@ -14,19 +14,7 @@ export default defineConfig({
       ]
     })
   ],
-  base: '/',  // изменено с './'
   build: {
-    outDir: 'dist',
-    rollupOptions: {
-      output: {
-        assetFileNames: 'assets/[name].[ext]',
-        chunkFileNames: 'assets/[name].[hash].js',
-        entryFileNames: 'assets/[name].[hash].js'
-      }
-    }
-  },
-  server: {
-    port: 3000,
-    host: true
+    outDir: 'dist'
   }
 });
