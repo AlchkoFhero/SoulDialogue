@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://dialog-dushi.ru/sitemap.xml
 
-# Disallow admin and private pages
-Disallow: /admin/
-Disallow: /private/
+Sitemap: https://souldialogue.netlify.app/sitemap.xml
