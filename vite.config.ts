@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// Исправленный импорт плагина
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
@@ -9,14 +8,24 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: '_redirects', // Исходный файл
+          src: '_redirects',
           dest: '' // Поместить файл в корень папки dist
         }
       ]
     })
   ],
+  base: './', // Добавляем эту строку для корректных путей
   server: {
     port: 3000,
     host: true
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   }
 });
