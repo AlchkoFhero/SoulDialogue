@@ -5,14 +5,14 @@ export async function handler(event) {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Переменные окружения не заданы' })
+            body: JSON.stringify({ error: 'Environment variables not set' }),
         };
     }
 
     const { name, phone, message } = JSON.parse(event.body || '{}');
 
     const text = `
-  📝 Новая заявка с сайта SoulDialogue
+  📝 Новая заявка с сайта
   
   📆 ${new Date().toLocaleDateString('ru-RU')}
   ⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0, 5)}
@@ -23,25 +23,22 @@ export async function handler(event) {
     `;
 
     try {
-        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text
-            })
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
         });
 
-        const result = await res.json();
+        const result = await telegramRes.json();
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ ok: true, result })
+            body: JSON.stringify({ ok: true, result }),
         };
     } catch (error) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message })
+            body: JSON.stringify({ error: error.message }),
         };
     }
 }
