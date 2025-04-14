@@ -1,72 +1,58 @@
-export async function handler(event) {
-    const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+// .netlify/functions/sendTelegramMessage.js
+
+const fetch = require('node-fetch');
+
+exports.handler = async (event) => {
+    const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
 
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-        console.error("❌ Ошибка: переменные окружения не заданы");
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Переменные окружения не заданы" }),
+            body: JSON.stringify({ error: 'Environment variables not set' }),
         };
     }
 
-    let name = "";
-    let phone = "";
-    let message = "";
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method Not Allowed' }),
+        };
+    }
 
     try {
-        const body = JSON.parse(event.body);
-        name = body.name || "";
-        phone = body.phone || "";
-        message = body.message || "";
-    } catch (err) {
-        console.error("❌ Ошибка парсинга тела запроса", err);
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "Неверный формат запроса" }),
-        };
-    }
+        const { name, phone, message } = JSON.parse(event.body);
 
-    const text = `
-  📝 Новая заявка с сайта SoulDialogue
-  
-  📆 ${new Date().toLocaleDateString("ru-RU")}
-  ⏰ ${new Date().toLocaleTimeString("ru-RU").slice(0, 5)}
-  
-  👤 Имя: ${name}
-  📞 Телефон: ${phone}
-  ✉️ Сообщение: ${message}
+        const text = `
+📝 Новая заявка с сайта
+
+📆 ${new Date().toLocaleDateString('ru-RU')}
+⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0, 5)}
+
+👤 Имя: ${name}
+📞 Телефон: ${phone}
+✉️ Сообщение: ${message}
     `;
 
-    try {
-        const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text,
-            }),
+        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
         });
 
-        const result = await telegramRes.json();
+        const data = await response.json();
 
-        if (!telegramRes.ok) {
-            console.error("❌ Ошибка при отправке в Telegram:", result);
-            return {
-                statusCode: telegramRes.status,
-                body: JSON.stringify({ error: "Не удалось отправить сообщение", details: result }),
-            };
+        if (!data.ok) {
+            throw new Error(data.description || 'Ошибка при отправке сообщения');
         }
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ ok: true, result }),
+            body: JSON.stringify({ ok: true, result: data.result }),
         };
     } catch (error) {
-        console.error("❌ Сбой при отправке в Telegram:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Ошибка отправки", details: error.message }),
+            body: JSON.stringify({ error: error.message }),
         };
     }
-}
+};
