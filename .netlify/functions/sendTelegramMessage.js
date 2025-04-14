@@ -1,25 +1,21 @@
-export async function handler(event) {
+export default async function handler(event) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+    console.log("TELEGRAM_BOT_TOKEN:", TELEGRAM_BOT_TOKEN);
+    console.log("TELEGRAM_CHAT_ID:", TELEGRAM_CHAT_ID);
 
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Environment variables not set' }),
+            body: JSON.stringify({ error: 'TELEGRAM variables not defined' }),
         };
     }
 
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: 'Method Not Allowed' }),
-        };
-    }
+    const { name, phone, message } = JSON.parse(event.body || '{}');
+    console.log("📦 Получены данные из формы:", { name, phone, message });
 
-    try {
-        const { name, phone, message } = JSON.parse(event.body);
-
-        const text = `
+    const text = `
   📝 Новая заявка с сайта
   
   📆 ${new Date().toLocaleDateString('ru-RU')}
@@ -28,9 +24,10 @@ export async function handler(event) {
   👤 Имя: ${name}
   📞 Телефон: ${phone}
   ✉️ Сообщение: ${message}
-      `;
+    `;
 
-        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    try {
+        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -39,10 +36,11 @@ export async function handler(event) {
             }),
         });
 
-        const data = await response.json();
+        const data = await res.json();
+        console.log("✅ Ответ Telegram:", data);
 
         if (!data.ok) {
-            throw new Error(data.description || 'Ошибка отправки');
+            throw new Error(data.description || 'Unknown Telegram error');
         }
 
         return {
@@ -50,9 +48,10 @@ export async function handler(event) {
             body: JSON.stringify({ ok: true }),
         };
     } catch (err) {
+        console.error("🔥 Ошибка при выполнении:", err.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: err.message }),
+            body: JSON.stringify({ error: err.message || 'Internal error' }),
         };
     }
 }
