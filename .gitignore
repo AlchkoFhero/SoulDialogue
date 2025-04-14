@@ -30,4 +30,4 @@ dist-ssr
 #.netlify
 
 # Local Netlify folder
-.netlify
+#.netlify
