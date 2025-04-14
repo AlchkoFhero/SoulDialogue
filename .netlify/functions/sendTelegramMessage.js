@@ -1,113 +1,70 @@
-// .netlify/functions/sendTelegramMessage.js
+const https = require('https');
 
-const fetch = require('node-fetch');
-
-exports.handler = async (event) => {
+exports.handler = async function (event) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-        console.error("❌ Переменные окружения не заданы");
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Environment variables not set' }),
+            body: JSON.stringify({ error: 'Не заданы переменные окружения' }),
         };
     }
 
-    let payload;
     try {
-        payload = JSON.parse(event.body);
-    } catch (err) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Невалидный JSON в теле запроса' }),
-        };
-    }
+        const { name, phone, message } = JSON.parse(event.body);
 
-    const { name, phone, message, hiddenField } = payload;
+        // Московское время
+        const moscowOffset = 3 * 60 * 60 * 1000;
+        const now = new Date(Date.now() + moscowOffset);
+        const date = now.toISOString().slice(0, 10).split('-').reverse().join('-');
+        const time = now.toTimeString().slice(0, 5);
 
-    // Проверка honeypot-поля
-    if (hiddenField && hiddenField.trim() !== '') {
-        console.warn("⚠️ Обнаружен бот (honeypot заполнен)");
-        return {
-            statusCode: 403,
-            body: JSON.stringify({ error: 'Bot detection triggered' }),
-        };
-    }
+        // Основное текстовое сообщение
+        const text = `
+📝 Новая заявка с сайта souldialogue.netlify.app
 
-    // Проверка обязательных полей
-    if (!name || !phone || !message) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Все поля обязательны' }),
-        };
-    }
-
-    const now = new Date();
-    const formatter = new Intl.DateTimeFormat('ru-RU', {
-        timeZone: 'Europe/Moscow',
-        hour: '2-digit', minute: '2-digit',
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    });
-    const [datePart, timePart] = formatter.formatToParts(now).reduce((acc, part) => {
-        if (part.type === 'day') acc[0] = part.value;
-        if (part.type === 'month') acc[1] = part.value;
-        if (part.type === 'year') acc[2] = part.value;
-        if (part.type === 'hour') acc[3] = part.value;
-        if (part.type === 'minute') acc[4] = part.value;
-        return acc;
-    }, []);
-
-    const date = `${datePart}.${formatter.formatToParts(now).find(p => p.type === 'month').value}.${formatter.formatToParts(now).find(p => p.type === 'year').value}`;
-    const time = `${formatter.formatToParts(now).find(p => p.type === 'hour').value}:${formatter.formatToParts(now).find(p => p.type === 'minute').value}`;
-
-    const text = `
-📝 Новая заявка с сайта SoulDialogue
-
-📆 ${date}
+📅 ${date}
 ⏰ ${time}
 
 👤 Имя: ${name}
 📞 Телефон: ${phone}
-✉️ Сообщение: ${message}`;
+✉️ Сообщение: ${message}
+    `.trim();
 
-    const contactPayload = {
-        chat_id: TELEGRAM_CHAT_ID,
-        contact: {
-            phone_number: phone,
-            first_name: name,
-        },
-    };
-
-    try {
-        const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        // Отправка текстового сообщения
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text,
+                parse_mode: 'HTML',
+                disable_web_page_preview: true,
+            }),
         });
 
-        const contactRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`, {
+        // Отправка контакт-карточки
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(contactPayload),
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                phone_number: phone.replace(/[^\d+]/g, ''),
+                first_name: name,
+            }),
         });
-
-        const result = await telegramRes.json();
-        const contactResult = await contactRes.json();
-
-        if (!result.ok || !contactResult.ok) {
-            throw new Error('Ошибка при отправке в Telegram');
-        }
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ ok: true }),
+            body: JSON.stringify({ success: true }),
         };
     } catch (error) {
-        console.error("🔥 Ошибка при отправке сообщения:", error);
+        console.error('🔥 Ошибка при отправке:', error.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Ошибка при отправке сообщения в Telegram' }),
+            body: JSON.stringify({ error: error.message }),
         };
     }
 };
+
