@@ -1,20 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default defineConfig({
-  plugins: [
-    react(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: '_redirects',
-          dest: ''
-        }
-      ]
-    })
-  ],
-  build: {
-    outDir: 'dist'
-  }
+export default defineConfig(async () => {
+  const { viteStaticCopy } = await import('vite-plugin-static-copy');
+
+  return {
+    plugins: [
+      react(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: '_redirects',
+            dest: ''
+          }
+        ]
+      }),
+    ],
+    build: {
+      outDir: 'dist'
+    }
+  };
 });
