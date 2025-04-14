@@ -1,67 +1,71 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-    console.log('TELEGRAM_BOT_TOKEN:', TELEGRAM_BOT_TOKEN);
-    console.log('TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID);
-
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: '❌ Переменные окружения не заданы' }),
-        };
+        return new Response(JSON.stringify({ error: 'Missing environment variables' }), { status: 500 });
     }
 
     let data;
+
     try {
         data = JSON.parse(event.body);
-        console.log('📦 Получены данные из формы:', data);
-    } catch (err) {
-        console.error('❌ Ошибка при разборе тела запроса:', err);
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: '❌ Неверный формат JSON' }),
-        };
+    } catch (error) {
+        return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
     }
 
     const { name, phone, message } = data;
 
-    const text =
-        `📝 Новая заявка с сайта\n\n` +
-        `📆 ${new Date().toLocaleDateString('ru-RU')}\n` +
-        `⏰ ${new Date().toLocaleTimeString('ru-RU').slice(0, 5)}\n\n` +
-        `👤 Имя: ${name || 'не указано'}\n` +
-        `📞 Телефон: ${phone || 'не указан'}\n` +
-        `✉️ Сообщение: ${message || 'не указано'}`;
+    const formattedDate = new Date().toLocaleDateString('ru-RU').split('.').reverse().join('-');
+    const formattedTime = new Date().toLocaleTimeString('ru-RU').slice(0, 5);
+
+    const text = `
+📝 Новая заявка с сайта https://souldialogue.netlify.app
+
+📅 ${formattedDate}
+⏰ ${formattedTime}
+
+👤 Имя: ${name}
+📞 Телефон: ${phone}
+✉️ Сообщение: ${message}
+  `;
 
     try {
-        const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        // Отправляем текстовое сообщение
+        const sendMessageRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
                 text,
-            }),
+                parse_mode: 'HTML'
+            })
         });
 
-        const result = await telegramRes.json();
-        console.log('✅ Ответ Telegram:', result);
+        const sendMessageResult = await sendMessageRes.json();
 
-        if (!result.ok) {
-            throw new Error(result.description);
-        }
+        // Отправляем контакт
+        const sendContactRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendContact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                phone_number: phone.replace(/[^+\d]/g, ''),
+                first_name: name
+            })
+        });
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ ok: true, result }),
-        };
-    } catch (err) {
-        console.error('🔥 Ошибка при отправке в Telegram:', err);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: err.message }),
-        };
+        const sendContactResult = await sendContactRes.json();
+
+        return new Response(JSON.stringify({
+            ok: true,
+            message_result: sendMessageResult,
+            contact_result: sendContactResult
+        }), { status: 200 });
+    } catch (error) {
+        console.error('🔥 Ошибка при отправке:', error);
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
 };
