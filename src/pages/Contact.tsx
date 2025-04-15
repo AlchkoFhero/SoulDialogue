@@ -3,9 +3,61 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Phone, MapPin, MessageCircle, Clock } from 'lucide-react';
 
+interface FormData {
+  name: string;
+  phone: string;
+  message: string;
+  website?: string;
+}
+
+interface FormErrors {
+  name?: string;
+  phone?: string;
+  message?: string;
+}
+
+const initialFormData: FormData = {
+  name: '',
+  phone: '',
+  message: '',
+};
+
+const formatPhoneNumber = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '');
+  if (cleaned.length === 0) return '';
+  if (cleaned.length <= 3) return `+7 (${cleaned}`;
+  if (cleaned.length <= 6) return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
+  if (cleaned.length <= 8) return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 8)}-${cleaned.slice(8, 10)}`;
+};
+
+const validateForm = (data: FormData): FormErrors => {
+  const errors: FormErrors = {};
+
+  if (!data.name.trim()) {
+    errors.name = 'Пожалуйста, введите ваше имя';
+  }
+
+  if (!data.phone.trim()) {
+    errors.phone = 'Пожалуйста, введите номер телефона';
+  } else if (data.phone.replace(/\D/g, '').length < 10) {
+    errors.phone = 'Введите корректный номер телефона';
+  }
+
+  if (!data.message.trim()) {
+    errors.message = 'Пожалуйста, введите сообщение';
+  }
+
+  return errors;
+};
+
 export function Contact() {
   const contentRef = useRef(null);
   const [layoutShift, setLayoutShift] = useState(0);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [responseMessage, setResponseMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     AOS.init({
@@ -32,22 +84,14 @@ export function Contact() {
     }
   }, [layoutShift]);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    message: '',
-  });
-
-  const [responseMessage, setResponseMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
+    setErrors(prev => ({ ...prev, [id]: '' }));
+
     if (id === 'phone') {
-      const cleaned = value.replace(/[^\d+()\s-]/g, '');
-      setFormData((prev) => ({ ...prev, phone: cleaned }));
+      setFormData(prev => ({ ...prev, phone: formatPhoneNumber(value) }));
     } else {
-      setFormData((prev) => ({ ...prev, [id]: value }));
+      setFormData(prev => ({ ...prev, [id]: value }));
     }
   };
 
@@ -55,23 +99,25 @@ export function Contact() {
     e.preventDefault();
     setResponseMessage('');
 
-    // ⛔ Honeypot field
+    // Honeypot check
     const form = e.target as HTMLFormElement;
     if ((form as any)?.website?.value) {
       console.warn('Бот пойман на honeypot');
       return;
     }
 
-    // 🛡️ Простая защита от частого спама (в браузере)
+    // Validation
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Spam protection
     const lastSent = localStorage.getItem('lastSent');
     const now = Date.now();
     if (lastSent && now - parseInt(lastSent) < 30000) {
       setResponseMessage('Подождите немного перед повторной отправкой.');
-      return;
-    }
-
-    if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
-      setResponseMessage('Пожалуйста, заполните все поля.');
       return;
     }
 
@@ -94,7 +140,8 @@ export function Contact() {
 
       localStorage.setItem('lastSent', now.toString());
       setResponseMessage('Сообщение успешно отправлено!');
-      setFormData({ name: '', phone: '', message: '' });
+      setFormData(initialFormData);
+      setErrors({});
     } catch (error: any) {
       console.error('Ошибка отправки:', error.message || error);
       setResponseMessage('Ошибка сервера. Попробуйте позже.');
@@ -179,49 +226,73 @@ export function Contact() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <input type="text" name="website" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Ваше имя</label>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Ваше имя
+                </label>
                 <input
                   type="text"
                   id="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Введите ваше имя"
-                  className="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 hover:border-purple-300 outline-none p-2"
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
+                    ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
+                  aria-invalid={errors.name ? 'true' : 'false'}
                 />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                )}
               </div>
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Телефон</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  Телефон
+                </label>
                 <input
                   type="tel"
                   id="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Введите ваш телефон"
-                  className="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 hover:border-purple-300 outline-none p-2"
+                  placeholder="+7 (___) ___-__-__"
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
+                    ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
+                  aria-invalid={errors.phone ? 'true' : 'false'}
                 />
+                {errors.phone && (
+                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                )}
               </div>
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">Сообщение</label>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                  Сообщение
+                </label>
                 <textarea
                   id="message"
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Напишите ваше сообщение"
-                  className="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 hover:border-purple-300 outline-none p-2"
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
+                    ${errors.message ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
+                  aria-invalid={errors.message ? 'true' : 'false'}
                 ></textarea>
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                )}
               </div>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg py-3 px-4 hover:from-purple-600 hover:to-purple-800 transition-all shadow-md font-semibold"
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg py-3 px-4 hover:from-purple-600 hover:to-purple-800 transition-all shadow-md font-semibold disabled:opacity-50"
                 disabled={loading}
               >
                 {loading ? 'Отправка...' : 'Отправить'}
               </button>
+              {responseMessage && (
+                <p className={`mt-4 text-center text-sm ${responseMessage.includes('успешно') ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                  {responseMessage}
+                </p>
+              )}
             </form>
-            {responseMessage && (
-              <p className="mt-4 text-center text-sm text-gray-600">{responseMessage}</p>
-            )}
           </div>
         </div>
 
