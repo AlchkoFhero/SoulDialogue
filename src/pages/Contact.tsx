@@ -23,12 +23,56 @@ const initialFormData: FormData = {
 };
 
 const formatPhoneNumber = (value: string): string => {
-  const cleaned = value.replace(/\D/g, '');
+  // Сохраняем плюс в начале, если он есть
+  const hasPlus = value.startsWith('+');
+
+  // Очищаем от всего кроме цифр
+  let cleaned = value.replace(/\D/g, '');
+
+  // Если номер пустой
   if (cleaned.length === 0) return '';
-  if (cleaned.length <= 3) return `+7 (${cleaned}`;
-  if (cleaned.length <= 6) return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
-  if (cleaned.length <= 8) return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-  return `+7 (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 8)}-${cleaned.slice(8, 10)}`;
+
+  // Обработка российских номеров
+  if (cleaned.startsWith('8') || cleaned.startsWith('7')) {
+    // Убираем 8 или 7 в начале и добавляем +7
+    cleaned = cleaned.substring(1);
+    return formatRussianNumber(cleaned);
+  }
+
+  // Если начинался с плюса - возвращаем его
+  if (hasPlus) {
+    return `+${cleaned}`;
+  }
+
+  return cleaned;
+};
+
+// Форматирование российского номера
+const formatRussianNumber = (cleaned: string): string => {
+  const parts = [];
+  parts.push('+7');
+
+  if (cleaned.length > 0) {
+    parts.push(' (');
+    parts.push(cleaned.substring(0, Math.min(3, cleaned.length)));
+  }
+
+  if (cleaned.length > 3) {
+    parts.push(') ');
+    parts.push(cleaned.substring(3, Math.min(6, cleaned.length)));
+  }
+
+  if (cleaned.length > 6) {
+    parts.push('-');
+    parts.push(cleaned.substring(6, Math.min(8, cleaned.length)));
+  }
+
+  if (cleaned.length > 8) {
+    parts.push('-');
+    parts.push(cleaned.substring(8, Math.min(10, cleaned.length)));
+  }
+
+  return parts.join('');
 };
 
 const validateForm = (data: FormData): FormErrors => {
@@ -40,8 +84,19 @@ const validateForm = (data: FormData): FormErrors => {
 
   if (!data.phone.trim()) {
     errors.phone = 'Пожалуйста, введите номер телефона';
-  } else if (data.phone.replace(/\D/g, '').length < 10) {
-    errors.phone = 'Введите корректный номер телефона';
+  } else {
+    const digits = data.phone.replace(/\D/g, '');
+    // Для российских номеров проверяем длину 10 цифр (без кода страны)
+    if (data.phone.includes('+7') || data.phone.startsWith('8')) {
+      if (digits.length !== 11) {
+        errors.phone = 'Введите корректный российский номер телефона';
+      }
+    } else {
+      // Для международных номеров минимум 8 цифр
+      if (digits.length < 8) {
+        errors.phone = 'Номер телефона должен содержать минимум 8 цифр';
+      }
+    }
   }
 
   if (!data.message.trim()) {
