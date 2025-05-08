@@ -54,7 +54,8 @@ ${message}
             body: JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
                 phone_number: phone.replace(/[^\d+]/g, ''),
-                name: `LEAD: ${name} 🌐`,
+                first_name: name,
+                last_name: 'LEAD - 🌐',
             }),
         });
 
