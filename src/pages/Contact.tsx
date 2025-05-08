@@ -102,7 +102,7 @@ export function Contact() {
     // Honeypot check
     const form = e.target as HTMLFormElement;
     if ((form as any)?.website?.value) {
-      console.warn('Бот пойман на honeypot');
+      console.warn('Бот пойман на honeypот');
       return;
     }
 
@@ -163,131 +163,123 @@ export function Contact() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-right" data-aos-delay="200">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Наши контакты</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          {/* Секция контактов */}
+          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-right" data-aos-delay="200">
             <div className="space-y-6">
+              {/* Телефон */}
               <div className="flex items-center">
-                <Phone className="w-6 h-6 text-purple-600" />
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-purple-600" />
+                </div>
                 <a
                   href="tel:+79179351851"
-                  className="ml-4 text-gray-700 hover:text-purple-600 text-lg font-medium"
+                  className="ml-4 text-gray-700 hover:text-purple-600 transition-colors duration-300 text-base"
                 >
                   +7 (917) 935-18-51
                 </a>
               </div>
-              <div className="flex space-x-2">
-                <a
-                  href="https://api.whatsapp.com/send?phone=79179351851"
-                  className="flex items-center justify-center px-3 py-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-full hover:from-green-500 hover:to-green-700 transition-all transform hover:scale-105 shadow-sm w-full"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ maxWidth: '140px' }}
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  <span className="text-sm font-medium whitespace-nowrap">WhatsApp</span>
-                </a>
+
+              {/* Мессенджеры */}
+              <div className="flex space-x-4">
                 <a
                   href="https://t.me/Valentina_mas5"
-                  className="flex items-center justify-center px-3 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-full hover:from-blue-500 hover:to-blue-700 transition-all transform hover:scale-105 shadow-sm w-full"
+                  className="flex-1 flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-sm"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ maxWidth: '140px' }}
                 >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  <span className="text-sm font-medium whitespace-nowrap">Telegram</span>
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  <span className="text-sm font-medium">Telegram</span>
+                </a>
+                <a
+                  href="https://api.whatsapp.com/send?phone=79179351851"
+                  className="flex-1 flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-sm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  <span className="text-sm font-medium">WhatsApp</span>
                 </a>
               </div>
+
+              {/* Адрес */}
               <div className="flex items-start">
-                <MapPin className="w-6 h-6 text-purple-600" />
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                </div>
                 <div className="ml-4">
-                  <p className="text-gray-600 text-lg font-medium">
-                    г. Альметьевск, ул. Мира, д. 2
-                  </p>
+                  <p className="text-gray-700 text-base">г. Альметьевск, ул. Мира</p>
+                  <p className="text-gray-700 text-base">д. 2, ТРЦ "Тандем"</p>
                 </div>
               </div>
+
+              {/* Режим работы */}
               <div className="flex items-start">
-                <Clock className="w-6 h-6 text-purple-600" />
-                <div className="ml-4">
-                  <table className="text-gray-600 text-sm">
-                    <tbody>
-                      <tr><td className="pr-4 font-medium">Пн-Пт:</td><td>9:00–20:00</td></tr>
-                      <tr><td className="pr-4 font-medium">Сб:</td><td>10:00–18:00</td></tr>
-                      <tr><td className="pr-4 font-medium">Вс:</td><td>Выходной</td></tr>
-                    </tbody>
-                  </table>
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-purple-600" />
+                </div>
+                <div className="ml-4 text-base">
+                  <p className="text-gray-700">Пн-Вс: 7:00–20:00</p>
+                  <p className="text-gray-500 mt-1">По предварительной записи</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8" data-aos="fade-left" data-aos-delay="200">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Напишите нам</h2>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Форма обратной связи */}
+          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-left" data-aos-delay="200">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <input type="text" name="website" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Ваше имя
-                </label>
                 <input
                   type="text"
                   id="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Введите ваше имя"
-                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
-                    ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
-                  aria-invalid={errors.name ? 'true' : 'false'}
+                  placeholder="Ваше имя"
+                  className={`w-full px-4 py-2.5 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-200'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300`}
                 />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                )}
+                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
+
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Телефон
-                </label>
                 <input
                   type="tel"
                   id="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+7 (___) ___-__-__"
-                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
-                    ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
-                  aria-invalid={errors.phone ? 'true' : 'false'}
+                  placeholder="Телефон"
+                  className={`w-full px-4 py-2.5 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-200'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300`}
                 />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                )}
+                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
+
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-                  Сообщение
-                </label>
                 <textarea
                   id="message"
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Напишите ваше сообщение"
-                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 hover:border-purple-300 outline-none p-2
-                    ${errors.message ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-purple-500'}`}
-                  aria-invalid={errors.message ? 'true' : 'false'}
-                ></textarea>
-                {errors.message && (
-                  <p className="mt-1 text-sm text-red-600">{errors.message}</p>
-                )}
+                  placeholder="Ваше сообщение"
+                  className={`w-full px-4 py-2.5 rounded-lg border ${errors.message ? 'border-red-500' : 'border-gray-200'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300`}
+                />
+                {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message}</p>}
               </div>
+
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-lg py-3 px-4 hover:from-purple-600 hover:to-purple-800 transition-all shadow-md font-semibold disabled:opacity-50"
                 disabled={loading}
+                className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
-                {loading ? 'Отправка...' : 'Отправить'}
+                {loading ? 'Отправка...' : 'Отправить сообщение'}
               </button>
+
               {responseMessage && (
-                <p className={`mt-4 text-center text-sm ${responseMessage.includes('успешно') ? 'text-green-600' : 'text-red-600'
+                <p className={`text-center text-sm ${responseMessage.includes('успешно') ? 'text-green-600' : 'text-red-500'
                   }`}>
                   {responseMessage}
                 </p>
