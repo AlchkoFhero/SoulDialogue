@@ -27,6 +27,7 @@ exports.handler = async function (event) {
 
 👤 Имя: ${name}
 📞 Телефон: ${phone}
+
 ✉️ Сообщение: 
 
 ${message}

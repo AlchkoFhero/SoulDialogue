@@ -26,7 +26,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              г. Альметьевск, ул. Ленина, д. 52
+              г. Альметьевск, ул. Ленина, д. 2
             </a>
           </div>
         </div>
