@@ -23,14 +23,17 @@ exports.handler = async function (event) {
         // Основное текстовое сообщение
         const text = `
 📝 Новая заявка с сайта souldialogue.netlify.app
-
-📅 ${date}
-⏰ ${time}
+🌟 LEAD
 
 👤 Имя: ${name}
 📞 Телефон: ${phone}
-✉️ Сообщение: ${message}
-    `.trim();
+✉️ Сообщение: 
+
+${message}
+
+📆 ${new Date().toLocaleDateString('ru-RU')}
+⏰ ${new Date().toLocaleTimeString('ru-RU')}
+🌐 Источник: Website`.trim();
 
         // Отправка текстового сообщения
         await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -51,7 +54,8 @@ exports.handler = async function (event) {
             body: JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
                 phone_number: phone.replace(/[^\d+]/g, ''),
-                first_name: name,
+                firstName: `LEAD: ${name}`,
+                lastName: "🌐"
             }),
         });
 
